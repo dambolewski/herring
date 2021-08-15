@@ -4,11 +4,11 @@ import {NgModule} from "@angular/core";
 const notifierCustomOptions: NotifierOptions = {
   position: {
     horizontal: {
-      position: 'left',
+      position: 'middle',
       distance: 150,
     },
     vertical: {
-      position: 'bottom',
+      position: 'top',
       distance: 12,
       gap: 10,
     },

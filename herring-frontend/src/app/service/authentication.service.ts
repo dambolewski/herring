@@ -10,19 +10,20 @@ import {JwtHelperService} from "@auth0/angular-jwt";
 })
 export class AuthenticationService {
   public host = environment.apiUrl;
-  private token!: any;
+  private token: any;
   private loggedInUsername!: any;
   private jwtHelper = new JwtHelperService();
+  public checkBool: boolean = false;
 
   constructor(private http: HttpClient) {
   }
 
-  public login(user: User): Observable<HttpResponse<any> | HttpErrorResponse> {
-    return this.http.post<HttpResponse<any> | HttpErrorResponse>('${this.host}/login', user, {observe: 'response'});
+  public login(user: User): Observable<HttpResponse<User>> {
+    return this.http.post<User>(encodeURI(this.host + '/login'), user, {observe: 'response'});
   }
 
-  public register(user: User): Observable<User | HttpErrorResponse> {
-    return this.http.post<User | HttpErrorResponse>('${this.host}/register', user);
+  public register(user: User): Observable<User> {
+    return this.http.post<User>(encodeURI(this.host + '/register'), user);
   }
 
   public logout(): void {
@@ -38,7 +39,7 @@ export class AuthenticationService {
     localStorage.setItem('token', token);
   }
 
-  public addUserToLocalCache(user: User): void {
+  public addUserToLocalCache(user: User | null): void {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -54,19 +55,23 @@ export class AuthenticationService {
     return this.token;
   }
 
-  // @ts-ignore
-  public isUserLoggedIn(): boolean{
+  public isUserLoggedIn(): boolean {
     this.loadToken();
     if (this.token != null && this.token !== '') {
       if (this.jwtHelper.decodeToken(this.token).sub != null || '') {
         if (!this.jwtHelper.isTokenExpired(this.token)) {
           this.loggedInUsername = this.jwtHelper.decodeToken(this.token).sub;
-          return true;
+          this.checkBool = true;
+          console.log(this.checkBool);
+          return this.checkBool;
         }
       }
     } else {
       this.logout();
-      return false;
+      this.checkBool = false;
+      console.log(this.checkBool)
+      return this.checkBool;
     }
+    throw new Error("Shouldn't get here");
   }
 }
