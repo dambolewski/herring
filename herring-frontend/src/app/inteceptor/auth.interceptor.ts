@@ -15,19 +15,20 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(httpRequest: HttpRequest<unknown>, httpHandler: HttpHandler): Observable<HttpEvent<any>> {
-    if (httpRequest.url.includes('${this.authenticationService.host}/login')) {
+    if (httpRequest.url.includes(this.authenticationService.host + "/login")) {
       return httpHandler.handle(httpRequest);
     }
-    if (httpRequest.url.includes('${this.authenticationService.host}/register')) {
+    if (httpRequest.url.includes(this.authenticationService.host + "/register")) {
       return httpHandler.handle(httpRequest);
     }
-    if (httpRequest.url.includes('${this.authenticationService.host}/resetPassword')) {
+    if (httpRequest.url.includes(this.authenticationService.host + "/resetPassword")) {
       return httpHandler.handle(httpRequest);
     }
     this.authenticationService.loadToken();
     const token = this.authenticationService.getToken();
+    console.log(token);
     const request = httpRequest.clone({
-      setHeaders: {Authentication: 'Bearer ${token}'}
+      setHeaders: {Authorization: 'Bearer ' + token}
     });
     return httpHandler.handle(request);
   }
