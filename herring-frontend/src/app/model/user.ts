@@ -1,7 +1,7 @@
 export class User {
   public id!: number;
   public userId!: string;
-  public fistName!: string;
+  public firstName!: string;
   public lastName!: string;
   public username!: string;
   public email!: string;
@@ -15,7 +15,7 @@ export class User {
 
 
   constructor() {
-    this.fistName = '';
+    this.firstName = '';
     this.lastName = '';
     this.username = '';
     this.email = '';

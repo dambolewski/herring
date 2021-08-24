@@ -13,7 +13,6 @@ export class AuthenticationService {
   private token: any;
   private loggedInUsername!: any;
   private jwtHelper = new JwtHelperService();
-  public checkBool: boolean = false;
 
   constructor(private http: HttpClient) {
   }
@@ -61,16 +60,12 @@ export class AuthenticationService {
       if (this.jwtHelper.decodeToken(this.token).sub != null || '') {
         if (!this.jwtHelper.isTokenExpired(this.token)) {
           this.loggedInUsername = this.jwtHelper.decodeToken(this.token).sub;
-          this.checkBool = true;
-          console.log(this.checkBool);
-          return this.checkBool;
+          return true;
         }
       }
     } else {
       this.logout();
-      this.checkBool = false;
-      console.log(this.checkBool)
-      return this.checkBool;
+      return false;
     }
     throw new Error("Shouldn't get here");
   }

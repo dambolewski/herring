@@ -37,6 +37,7 @@ import static pl.herring.constant.UserConstant.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = {"/", "/herring"})
+@CrossOrigin("http://localhost:4200/**")
 public class UserController extends ExceptionHandling {
     private UserService userService;
     private AuthenticationManager authenticationManager;
