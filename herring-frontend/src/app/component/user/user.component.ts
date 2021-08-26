@@ -144,6 +144,24 @@ export class UserComponent implements OnInit {
     )
   }
 
+  public onResetPassword(emailForm: NgForm): void {
+    const emailAddress = emailForm.value['reset-password-email'];
+    this.refreshing = true;
+    this.subscriptions.push(
+      this.userService.resetPassword(emailAddress).subscribe(
+        (response: CustomHttpResponse) => {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, response.message);
+          this.refreshing = false;
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.WARNING, errorResponse.error.message);
+          this.refreshing = false;
+        },
+        () => emailForm.reset()
+      )
+    );
+  }
+
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)!.click();
   }

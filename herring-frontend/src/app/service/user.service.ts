@@ -26,8 +26,8 @@ export class UserService {
     return this.http.post<User>(this.host + "/update", formData);
   }
 
-  public resetPassword(email: string): Observable<CustomHttpResponse | HttpErrorResponse> {
-    return this.http.get<CustomHttpResponse>('${this.host}/resetPassword/${email}')
+  public resetPassword(email: string): Observable<CustomHttpResponse> {
+    return this.http.get<CustomHttpResponse>(this.host + "/resetPassword/" + email);
   }
 
   public updateProfileImage(formData: FormData): Observable<HttpEvent<User> | HttpErrorResponse> {
