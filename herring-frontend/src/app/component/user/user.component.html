@@ -37,7 +37,9 @@
       <div class="mb-3 float-right">
         <div class="btn-group mr-2">
           <form class="form-inline my-2 my-lg-0 justify-content-center">
-            <input name="searchFileName" class="form-control mr-sm-2" type="search" placeholder="Search users...">
+            <input name="searchTerm" #searchForm="ngModel" class="form-control mr-sm-2" ngModel
+                   (ngModelChange)="searchUsers(searchForm.value)" type="search"
+                   placeholder="Search users...">
           </form>
           <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addUserModal">
             <i class="fa fa-plus"></i> New User
@@ -79,10 +81,10 @@
           </td>
           <td class="">
             <div class="btn-group">
-              <button class="btn btn-outline-info">
+              <button class="btn btn-outline-info" (click)="onEditUser(appUser)">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn btn-outline-danger">
+              <button class="btn btn-outline-danger" (click)="onDelete(appUser.id!)">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -146,7 +148,7 @@
                   <li class="list-group-item"><i class="fa fa-id-badge float-right"></i>{{selectedUser?.userId}}</li>
                   <li class="list-group-item"><i class="fa fa-envelope float-right"></i>{{selectedUser?.email}}</li>
                   <li class="list-group-item"><i
-                    class="fas fa-shield-alt float-right"></i>{{selectedUser?.role}}</li>
+                    class="fas fa-shield-alt float-right"></i>{{selectedUser?.role?.substring(5)}}</li>
                   <li *ngIf="selectedUser?.logInDateDisplay" class="list-group-item"><i
                     class="fas fa-sign-in-alt float-right">{{selectedUser?.logInDateDisplay | date: 'medium'}}</i></li>
                   <li class="list-group-item">
@@ -202,10 +204,10 @@
                   <label for="role">Role</label>
                   <select name="role" required ngModel="ROLE_USER" class="form-control">
                     <option value="ROLE_USER">USER</option>
-                    <option value="HR_USER">HR</option>
-                    <option value="MANAGER_USER">MANAGER</option>
-                    <option value="ADMIN_USER">ADMIN</option>
-                    <option value="SUPER_ADMIN_USER">SUPER ADMIN</option>
+                    <option value="ROLE_HR">HR</option>
+                    <option value="ROLE_MANAGER">MANAGER</option>
+                    <option value="ROLE_ADMIN">ADMIN</option>
+                    <option value="ROLE_SUPER_ADMIN">SUPER ADMIN</option>
                   </select>
                 </div>
                 <div class="input-group mb-2">
@@ -240,6 +242,86 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-user-close">Close</button>
             <button type="button" (click)="saveNewUser()" [disabled]="newUserForm.invalid" class="btn btn-primary">Save
+              changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal edit user -->
+    <div class="modal draggable fade bd-example-modal-lg" id="editUserModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-center">Edit {{editUser?.firstName}} {{editUser?.lastName}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <form #editUserForm="ngForm">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" name="firstName" required [(ngModel)]="editUser.firstName" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" name="lastName" required [(ngModel)]="editUser.lastName" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" required [(ngModel)]="editUser.username" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" name="email" required [(ngModel)]="editUser.email" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="role">Role</label>
+                  <select name="role" required [(ngModel)]="editUser.role" class="form-control">
+                    <option value="ROLE_USER">USER</option>
+                    <option value="ROLE_HR">HR</option>
+                    <option value="ROLE_MANAGER">MANAGER</option>
+                    <option value="ROLE_ADMIN">ADMIN</option>
+                    <option value="ROLE_SUPER_ADMIN">SUPER ADMIN</option>
+                  </select>
+                </div>
+                <div class="input-group mb-2">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Profile Picture</span>
+                  </div>
+                  <div class="custom-file">
+                    <input type="file" name="profileImage" (change)="onProfileImageChange($event)"
+                           class="custom-file-input">
+                    <label class="custom-file-label">
+                      <span [hidden]="!fileName">{{fileName}}</span>
+                      <span [hidden]="fileName">Choose File</span>
+                    </label>
+                  </div>
+                </div>
+                <fieldset class="form-group">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="active" [(ngModel)]="editUser.active" class="form-check-input">Active
+                    </label>
+                  </div>
+                  <div class="form-check disabled">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="notLocked" [(ngModel)]="editUser.notLocked" class="form-check-input">Unlocked
+                    </label>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeEditUserModalButton">Close
+            </button>
+            <button type="button" (click)="onUpdateUser()" [disabled]="editUserForm.invalid" class="btn btn-primary">
+              Save
               changes
             </button>
           </div>

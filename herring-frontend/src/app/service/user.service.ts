@@ -15,15 +15,15 @@ export class UserService {
   }
 
   public getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.host +"/find/list");
+    return this.http.get<User[]>(this.host + "/find/list");
   }
 
   public addUser(formData: FormData): Observable<User> {
     return this.http.post<User>(this.host + "/add", formData);
   }
 
-  public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
-    return this.http.post<User>('%{this.host}/update', formData);
+  public updateUser(formData: FormData): Observable<User> {
+    return this.http.post<User>(this.host + "/update", formData);
   }
 
   public resetPassword(email: string): Observable<CustomHttpResponse | HttpErrorResponse> {
@@ -38,8 +38,8 @@ export class UserService {
       });
   }
 
-  public deleteUser(userId: number): Observable<CustomHttpResponse | HttpErrorResponse> {
-    return this.http.delete<CustomHttpResponse>('${this.host}/delete/${userId}')
+  public deleteUser(userId: number): Observable<CustomHttpResponse> {
+    return this.http.delete<CustomHttpResponse>(this.host + "/delete/" + userId);
   }
 
   public addUsersToLocalCache(users: User[]): void {

@@ -6,6 +6,7 @@ import {NotificationService} from "../../service/notification.service";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
+import {CustomHttpResponse} from "../../model/custom-http-response";
 
 @Component({
   selector: 'app-user',
@@ -15,12 +16,14 @@ import {NgForm} from "@angular/forms";
 export class UserComponent implements OnInit {
   private titleSubject = new BehaviorSubject<string>('Users');
   public titleActions$ = this.titleSubject.asObservable();
-  public users!: User[];
+  public users!: User[] | null;
   public refreshing!: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser!: User;
   public fileName!: string | null;
   public profileImage!: File | null;
+  public editUser = new User();
+  private currentUsername!: string;
 
   constructor(private userService: UserService, private notificationService: NotificationService) {
   }
@@ -64,14 +67,6 @@ export class UserComponent implements OnInit {
     this.profileImage = (<HTMLInputElement>event.target).files![0];
   }
 
-  private sendNotification(notificationType: NotificationTypeEnum, message: string): void {
-    if (message) {
-      this.notificationService.notify(notificationType, message);
-    } else {
-      this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
-    }
-  }
-
   public saveNewUser(): void {
     this.clickButton('new-user-save');
   }
@@ -86,6 +81,45 @@ export class UserComponent implements OnInit {
           this.fileName = null;
           this.profileImage = null;
           userForm.reset();
+          this.sendNotification(NotificationTypeEnum.SUCCESS, response.firstName + " " + response.lastName + " added successfully.")
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.profileImage = null;
+        }
+      )
+    );
+  }
+
+  public searchUsers(searchTerm: string): void {
+    const result: User[] = [];
+    for (const user of this.userService.getUsersFromLocalCache()!) {
+      if (user.firstName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.lastName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.username.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.email.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.userId.indexOf(searchTerm) !== -1) {
+        result.push(user);
+      }
+    }
+    this.users = result;
+  }
+
+  public onEditUser(editUser: User): void {
+    this.editUser = editUser;
+    this.currentUsername = editUser.username;
+    this.clickButton('openUserEdit');
+  }
+
+  public onUpdateUser(): void {
+    const formData = this.userService.createUserFormDate(this.currentUsername, this.editUser, this.profileImage!);
+    this.subscriptions.push(
+      this.userService.updateUser(formData).subscribe(
+        (response: User) => {
+          this.clickButton('closeEditUserModalButton');
+          this.getUsers(false);
+          this.fileName = null;
+          this.profileImage = null;
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.firstName + " " + response.lastName + " updated successfully.")
         },
         (errorResponse: HttpErrorResponse) => {
@@ -96,7 +130,29 @@ export class UserComponent implements OnInit {
     );
   }
 
+  public onDelete(id: number): void {
+    this.subscriptions.push(
+      this.userService.deleteUser(id).subscribe(
+        (response: CustomHttpResponse) => {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, 'User deleted successfully');
+          this.getUsers(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    )
+  }
+
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)!.click();
+  }
+
+  private sendNotification(notificationType: NotificationTypeEnum, message: string): void {
+    if (message) {
+      this.notificationService.notify(notificationType, message);
+    } else {
+      this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
+    }
   }
 }
