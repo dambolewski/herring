@@ -131,12 +131,12 @@
                           <span [hidden]="!selectedUser?.active" class="badge badge-success">Active</span>
                           <span [hidden]="selectedUser?.active" class="badge badge-danger">Inactive</span>
                         </div>
-                        <div class="text-muted"><small>Last
-                          Login: {{selectedUser?.logInDateDisplay | date: 'medium'}}</small>
-                        </div>
+                        <!--                        <div class="text-muted"><small>Last
+                                                  Login: {{selectedUser?.logInDateDisplay}}</small>
+                                                </div>-->
                       </div>
                       <div class="text-center text-sm-right">
-                        <div class="text-muted"><small>Joined {{selectedUser?.joinDate | date: 'medium'}}</small></div>
+                        <div class="text-muted"><small>Joined {{selectedUser?.joinDate | date: 'long'}}</small></div>
                       </div>
                     </div>
                   </div>
@@ -163,6 +163,85 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal add user -->
+    <div class="modal draggable fade bd-example-modal-lg" id="addUserModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-center">New User</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <form #newUserForm="ngForm" (ngSubmit)="onAddNewUser(newUserForm)">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" name="firstName" required ngModel class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" name="lastName" required ngModel class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" required ngModel class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" name="email" required ngModel class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="role">Role</label>
+                  <select name="role" required ngModel="ROLE_USER" class="form-control">
+                    <option value="ROLE_USER">USER</option>
+                    <option value="HR_USER">HR</option>
+                    <option value="MANAGER_USER">MANAGER</option>
+                    <option value="ADMIN_USER">ADMIN</option>
+                    <option value="SUPER_ADMIN_USER">SUPER ADMIN</option>
+                  </select>
+                </div>
+                <div class="input-group mb-2">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Profile Picture</span>
+                  </div>
+                  <div class="custom-file">
+                    <input type="file" name="profileImage" (change)="onProfileImageChange($event)"
+                           class="custom-file-input">
+                    <label class="custom-file-label">
+                      <span [hidden]="!fileName">{{fileName}}</span>
+                      <span [hidden]="fileName">Choose File</span>
+                    </label>
+                  </div>
+                </div>
+                <fieldset class="form-group">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="active" ngModel class="form-check-input">Active
+                    </label>
+                  </div>
+                  <div class="form-check disabled">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="notLocked" ngModel class="form-check-input">Unlocked
+                    </label>
+                  </div>
+                </fieldset>
+                <button type="submit" style="display: none;" id="new-user-save"></button>
+              </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-user-close">Close</button>
+            <button type="button" (click)="saveNewUser()" [disabled]="newUserForm.invalid" class="btn btn-primary">Save
+              changes
+            </button>
           </div>
         </div>
       </div>

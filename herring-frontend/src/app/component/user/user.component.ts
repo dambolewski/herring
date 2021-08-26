@@ -5,6 +5,7 @@ import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-user',
@@ -18,6 +19,8 @@ export class UserComponent implements OnInit {
   public refreshing!: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser!: User;
+  public fileName!: string | null;
+  public profileImage!: File | null;
 
   constructor(private userService: UserService, private notificationService: NotificationService) {
   }
@@ -40,7 +43,7 @@ export class UserComponent implements OnInit {
           this.users = response;
           this.refreshing = false;
           if (showNotification) {
-            this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + "user(s) loaded successfully.");
+            this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + " user(s) loaded successfully.");
           }
         },
         (errorResponse: HttpErrorResponse) => {
@@ -56,6 +59,11 @@ export class UserComponent implements OnInit {
     document.getElementById('openUserInfo')!.click();
   }
 
+  public onProfileImageChange(event: Event): void {
+    this.fileName = (<HTMLInputElement>event.target).files![0].name;
+    this.profileImage = (<HTMLInputElement>event.target).files![0];
+  }
+
   private sendNotification(notificationType: NotificationTypeEnum, message: string): void {
     if (message) {
       this.notificationService.notify(notificationType, message);
@@ -64,4 +72,31 @@ export class UserComponent implements OnInit {
     }
   }
 
+  public saveNewUser(): void {
+    this.clickButton('new-user-save');
+  }
+
+  public onAddNewUser(userForm: NgForm): void {
+    const formData = this.userService.createUserFormDate('', userForm.value, this.profileImage!);
+    this.subscriptions.push(
+      this.userService.addUser(formData).subscribe(
+        (response: User) => {
+          this.clickButton('new-user-close');
+          this.getUsers(false);
+          this.fileName = null;
+          this.profileImage = null;
+          userForm.reset();
+          this.sendNotification(NotificationTypeEnum.SUCCESS, response.firstName + " " + response.lastName + " updated successfully.")
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.profileImage = null;
+        }
+      )
+    );
+  }
+
+  private clickButton(buttonId: string): void {
+    document.getElementById(buttonId)!.click();
+  }
 }

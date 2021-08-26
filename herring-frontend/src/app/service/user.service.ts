@@ -18,8 +18,8 @@ export class UserService {
     return this.http.get<User[]>(this.host +"/find/list");
   }
 
-  public addUser(formData: FormData): Observable<User | HttpErrorResponse> {
-    return this.http.post<User>('%{this.host}/add', formData);
+  public addUser(formData: FormData): Observable<User> {
+    return this.http.post<User>(this.host + "/add", formData);
   }
 
   public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
