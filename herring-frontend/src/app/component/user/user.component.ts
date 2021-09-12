@@ -4,9 +4,12 @@ import {User} from "../../model/user";
 import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
-import {HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpEvent, HttpEventType} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
 import {CustomHttpResponse} from "../../model/custom-http-response";
+import {AuthenticationService} from "../../service/authentication.service";
+import {Router} from "@angular/router";
+import {FileUploadStatus} from "../../model/file-upload.status";
 
 @Component({
   selector: 'app-user',
@@ -17,6 +20,7 @@ export class UserComponent implements OnInit {
   private titleSubject = new BehaviorSubject<string>('Users');
   public titleActions$ = this.titleSubject.asObservable();
   public users!: User[] | null;
+  public user!: User;
   public refreshing!: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser!: User;
@@ -24,11 +28,13 @@ export class UserComponent implements OnInit {
   public profileImage!: File | null;
   public editUser = new User();
   private currentUsername!: string;
+  public fileStatus = new FileUploadStatus();
 
-  constructor(private userService: UserService, private notificationService: NotificationService) {
+  constructor(private userService: UserService, private notificationService: NotificationService, private authenticationService: AuthenticationService, private router: Router) {
   }
 
   ngOnInit(): void {
+    this.user = this.authenticationService.getUserFromLocalCache();
     this.getUsers(true);
   }
 
@@ -142,6 +148,76 @@ export class UserComponent implements OnInit {
         }
       )
     )
+  }
+
+  public onUpdateCurrentUser(user: User): void {
+    this.refreshing = true;
+    this.currentUsername = this.authenticationService.getUserFromLocalCache().username;
+    const formData = this.userService.createUserFormDate(this.currentUsername, user, this.profileImage!);
+    this.subscriptions.push(
+      this.userService.updateUser(formData).subscribe(
+        (response: User) => {
+          this.authenticationService.addUserToLocalCache(response);
+          this.getUsers(false);
+          this.fileName = null;
+          this.profileImage = null;
+          this.sendNotification(NotificationTypeEnum.SUCCESS, response.firstName + " " + response.lastName + " updated successfully.")
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
+          this.profileImage = null;
+        }
+      )
+    );
+  }
+
+  public onLogOut(): void {
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
+    this.sendNotification(NotificationTypeEnum.SUCCESS, `You've been successfully logged out`);
+  }
+
+  public updateProfileImage(): void {
+    this.clickButton('profile-image-input');
+  }
+
+  public onUpdateProfileImage(): void {
+    const formData = new FormData();
+    formData.append('username', this.user.username);
+    formData.append('profileImage', this.profileImage!);
+    this.subscriptions.push(
+      this.userService.updateProfileImage(formData).subscribe(
+        (event: HttpEvent<any>) => {
+          this.reportUploadProgress(event);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.fileStatus.status = 'done';
+        }
+      )
+    );
+  }
+
+  private reportUploadProgress(event: HttpEvent<any>): void {
+    switch (event.type) {
+      case HttpEventType.UploadProgress:
+        this.fileStatus.status = 'progress';
+        this.fileStatus.percentage = Math.round(100 * event.loaded / event.total!);
+        break;
+      case HttpEventType.Response:
+        if (event.status === 200) {
+          this.user.profileImageUrl = event.body.profileImageUrl + "?time=$" + new Date().getTime();
+          this.sendNotification(NotificationTypeEnum.SUCCESS, event.body.firstName + `'s profile image updated successfully`);
+          this.fileStatus.status = 'done';
+          break;
+        } else {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, `Unable to upload image. Please try again`);
+          break;
+        }
+      default:
+        `Finished all processes`;
+    }
   }
 
   public onResetPassword(emailForm: NgForm): void {

@@ -54,6 +54,8 @@ export class AuthenticationService {
     return this.token;
   }
 
+
+  //ToDo change it - throw new error is not required
   public isUserLoggedIn(): boolean {
     this.loadToken();
     if (this.token != null && this.token !== '') {
