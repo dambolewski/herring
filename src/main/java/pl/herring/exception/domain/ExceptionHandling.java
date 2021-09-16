@@ -31,6 +31,7 @@ public class ExceptionHandling {
     public static final String ACCOUNT_DISABLED = "Your account has been disabled. If this is an error, please contact administrator";
     public static final String ERROR_PROCESSING_FILE = "Error occurred while processing file";
     public static final String NOT_ENOUGH_PERMISSION = "You do not have required permission";
+    public static final String PAGE_NOT_FOUND = "This page was not found";
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<HttpResponse> accountDisabledException() {
@@ -78,8 +79,8 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<HttpResponse> noHandlerFoundException(){
-        return createHttpResponse(BAD_REQUEST, "This page was not found");
+    public ResponseEntity<HttpResponse> noHandlerFoundException() {
+        return createHttpResponse(BAD_REQUEST, PAGE_NOT_FOUND);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -104,6 +105,12 @@ public class ExceptionHandling {
     public ResponseEntity<HttpResponse> iOException(IOException exception) {
         log.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
+    }
+
+    @ExceptionHandler(NotAnImageFileException.class)
+    public ResponseEntity<HttpResponse> notAnImageFileException(NotAnImageFileException exception) {
+        log.error(exception.getMessage());
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {

@@ -7,6 +7,7 @@ import {Subscription} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
 import {HeaderTypeEnum} from "../../enum/header-type.enum";
+import {SubSink} from "subsink";
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ import {HeaderTypeEnum} from "../../enum/header-type.enum";
 })
 export class LoginComponent implements OnInit, OnDestroy {
   public showLoading: boolean | undefined;
-  private subscriptions: Subscription[] = [];
+  private subs = new SubSink();
 
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService) {
@@ -31,7 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   public onLogin(user: User): void {
     this.showLoading = true;
-    this.subscriptions.push(
+    this.subs.add(
       this.authenticationService.login(user).subscribe(
         (response: HttpResponse<User>) => {
           const token = response.headers.get(HeaderTypeEnum.JWT_TOKEN);
@@ -57,6 +58,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subs.unsubscribe();
   }
 }

@@ -6,6 +6,7 @@ import {User} from "../../model/user";
 import {Subscription} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
+import {SubSink} from "subsink";
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ import {NotificationTypeEnum} from "../../enum/notification-type.enum";
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   public showLoading: boolean | undefined;
-  private subscriptions: Subscription[] = [];
+  private subs = new SubSink();
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService) {
   }
@@ -27,7 +28,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   public onRegister(user: User): void {
     this.showLoading = true;
-    this.subscriptions.push(
+    this.subs.add(
       this.authenticationService.register(user).subscribe(
         (response: User) => {
           this.showLoading = false;
@@ -51,6 +52,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subs.unsubscribe();
   }
 }

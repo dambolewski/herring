@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, Subscription} from "rxjs";
 import {User} from "../../model/user";
 import {UserService} from "../../service/user.service";
@@ -10,19 +10,21 @@ import {CustomHttpResponse} from "../../model/custom-http-response";
 import {AuthenticationService} from "../../service/authentication.service";
 import {Router} from "@angular/router";
 import {FileUploadStatus} from "../../model/file-upload.status";
+import {Role} from "../../enum/role.enum";
+import {SubSink} from "subsink";
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
+  private subs = new SubSink();
   private titleSubject = new BehaviorSubject<string>('Users');
   public titleActions$ = this.titleSubject.asObservable();
   public users!: User[] | null;
   public user!: User;
   public refreshing!: boolean;
-  private subscriptions: Subscription[] = [];
   public selectedUser!: User;
   public fileName!: string | null;
   public profileImage!: File | null;
@@ -45,7 +47,7 @@ export class UserComponent implements OnInit {
 
   public getUsers(showNotification: boolean): void {
     this.refreshing = true;
-    this.subscriptions.push(
+    this.subs.add(
       this.userService.getUsers().subscribe(
         (response: User[]) => {
           this.userService.addUsersToLocalCache(response);
@@ -79,7 +81,7 @@ export class UserComponent implements OnInit {
 
   public onAddNewUser(userForm: NgForm): void {
     const formData = this.userService.createUserFormDate('', userForm.value, this.profileImage!);
-    this.subscriptions.push(
+    this.subs.add(
       this.userService.addUser(formData).subscribe(
         (response: User) => {
           this.clickButton('new-user-close');
@@ -117,9 +119,24 @@ export class UserComponent implements OnInit {
     this.clickButton('openUserEdit');
   }
 
+
+  public onDelete(username: string): void {
+    this.subs.add(
+      this.userService.deleteUser(username).subscribe(
+        (response: CustomHttpResponse) => {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, 'User deleted successfully');
+          this.getUsers(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    )
+  }
+
   public onUpdateUser(): void {
     const formData = this.userService.createUserFormDate(this.currentUsername, this.editUser, this.profileImage!);
-    this.subscriptions.push(
+    this.subs.add(
       this.userService.updateUser(formData).subscribe(
         (response: User) => {
           this.clickButton('closeEditUserModalButton');
@@ -136,25 +153,11 @@ export class UserComponent implements OnInit {
     );
   }
 
-  public onDelete(id: number): void {
-    this.subscriptions.push(
-      this.userService.deleteUser(id).subscribe(
-        (response: CustomHttpResponse) => {
-          this.sendNotification(NotificationTypeEnum.SUCCESS, 'User deleted successfully');
-          this.getUsers(false);
-        },
-        (errorResponse: HttpErrorResponse) => {
-          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
-        }
-      )
-    )
-  }
-
   public onUpdateCurrentUser(user: User): void {
     this.refreshing = true;
     this.currentUsername = this.authenticationService.getUserFromLocalCache().username;
-    const formData = this.userService.createUserFormDate(this.currentUsername, user, this.profileImage!);
-    this.subscriptions.push(
+    const formData = this.userService.createUserFormDate(this.currentUsername, this.user, this.profileImage!);
+    this.subs.add(
       this.userService.updateUser(formData).subscribe(
         (response: User) => {
           this.authenticationService.addUserToLocalCache(response);
@@ -167,6 +170,7 @@ export class UserComponent implements OnInit {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
           this.refreshing = false;
           this.profileImage = null;
+
         }
       )
     );
@@ -186,7 +190,7 @@ export class UserComponent implements OnInit {
     const formData = new FormData();
     formData.append('username', this.user.username);
     formData.append('profileImage', this.profileImage!);
-    this.subscriptions.push(
+    this.subs.add(
       this.userService.updateProfileImage(formData).subscribe(
         (event: HttpEvent<any>) => {
           this.reportUploadProgress(event);
@@ -223,7 +227,7 @@ export class UserComponent implements OnInit {
   public onResetPassword(emailForm: NgForm): void {
     const emailAddress = emailForm.value['reset-password-email'];
     this.refreshing = true;
-    this.subscriptions.push(
+    this.subs.add(
       this.userService.resetPassword(emailAddress).subscribe(
         (response: CustomHttpResponse) => {
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.message);
@@ -238,6 +242,23 @@ export class UserComponent implements OnInit {
     );
   }
 
+  public get isAdmin(): boolean {
+    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.SUPER_ADMIN;
+  }
+
+
+  public get isManager(): boolean {
+    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER;
+  }
+
+  public get isAdminOrManager(): boolean {
+    return this.isAdmin || this.isManager;
+  }
+
+  private getUserRole(): string {
+    return this.authenticationService.getUserFromLocalCache().role;
+  }
+
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)!.click();
   }
@@ -248,5 +269,9 @@ export class UserComponent implements OnInit {
     } else {
       this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 }
