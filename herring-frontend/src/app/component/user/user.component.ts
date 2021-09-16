@@ -247,12 +247,12 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
 
-  public get isManager(): boolean {
-    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER;
+  public get isManagerOrHr(): boolean {
+    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER || this.getUserRole() === Role.HR;
   }
 
   public get isAdminOrManager(): boolean {
-    return this.isAdmin || this.isManager;
+    return this.isAdmin || this.isManagerOrHr;
   }
 
   private getUserRole(): string {

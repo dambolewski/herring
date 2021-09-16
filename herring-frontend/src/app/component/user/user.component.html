@@ -502,14 +502,14 @@
                 <fieldset class="form-group">
                   <div class="form-check">
                     <label class="form-check-label">
-                      <input type="checkbox" name="active" [disabled]="!isManager" [(ngModel)]="editUser.active"
-                             class="form-check-input">Active <small [hidden]="isManager">(read only)</small>
+                      <input type="checkbox" name="active" [disabled]="!isManagerOrHr" [(ngModel)]="editUser.active"
+                             class="form-check-input">Active <small [hidden]="isManagerOrHr">(read only)</small>
                     </label>
                   </div>
                   <div class="form-check disabled">
                     <label class="form-check-label">
-                      <input type="checkbox" name="notLocked" [disabled]="!isManager" [(ngModel)]="editUser.notLocked"
-                             class="form-check-input">Unlocked <small [hidden]="isManager">(read only)</small>
+                      <input type="checkbox" name="notLocked" [disabled]="!isManagerOrHr" [(ngModel)]="editUser.notLocked"
+                             class="form-check-input">Unlocked <small [hidden]="isManagerOrHr">(read only)</small>
                     </label>
                   </div>
                 </fieldset>
