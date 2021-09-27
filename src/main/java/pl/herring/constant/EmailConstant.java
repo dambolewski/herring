@@ -2,8 +2,8 @@ package pl.herring.constant;
 
 public class EmailConstant {
     public static final String SIMPLE_EMAIL_TRANSFER_PROTOCOL = "smtps";
-    public static final String USERNAME = "email@gmail.com";  //email from gmail - sender
-    public static final String PASSWORD = "password to ^ email";  //password to that account
+    public static final String USERNAME = "media.herring@gmail.com";  //email from gmail - sender
+    public static final String PASSWORD = "Herring.Media123!";  //password to that account
     public static final String FROM_EMAIL = "support@herring.com";
     public static final String CC_EMAIL = "";
     public static final String EMAIL_SUBJECT = "Herring, LLC - New Password";

@@ -12,15 +12,21 @@ import {NotificationModule} from "./notification.module";
 import {NotificationService} from "./service/notification.service";
 import {LoginComponent} from './component/login/login.component';
 import {RegisterComponent} from './component/register/register.component';
-import {UserComponent} from './component/user/user.component';
 import {FormsModule} from "@angular/forms";
+import { UsersComponent } from './component/users/users.component';
+import { SettingsUserComponent } from './component/settings-user/settings-user.component';
+import { UserInfoComponent } from './component/user-info/user-info.component';
+import { HomeComponent } from './component/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    UserComponent
+    UsersComponent,
+    SettingsUserComponent,
+    UserInfoComponent,
+    HomeComponent
   ],
     imports: [
         BrowserModule,

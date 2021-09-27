@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
         userRepository.save(user);
         saveProfileImage(user, profileImage);
-        emailService.sendPasswordEmail(firstName, lastName, email);
+        emailService.sendPasswordEmail(firstName, password, email);
         return user;
     }
 

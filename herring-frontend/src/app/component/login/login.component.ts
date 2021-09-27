@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.authenticationService.isUserLoggedIn()) {
-      this.router.navigateByUrl("/user/management");
+      this.router.navigateByUrl("/users");
     } else {
       this.router.navigateByUrl("/login");
     }
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           const token = response.headers.get(HeaderTypeEnum.JWT_TOKEN);
           this.authenticationService.saveToken(<string>token);
           this.authenticationService.addUserToLocalCache(response.body);
-          this.router.navigateByUrl('/user/management');
+          this.router.navigateByUrl('/home');
           this.showLoading = false;
         },
         (errorResponse: HttpErrorResponse) => {

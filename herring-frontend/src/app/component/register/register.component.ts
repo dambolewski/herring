@@ -3,7 +3,6 @@ import {Router} from "@angular/router";
 import {AuthenticationService} from "../../service/authentication.service";
 import {NotificationService} from "../../service/notification.service";
 import {User} from "../../model/user";
-import {Subscription} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../enum/notification-type.enum";
 import {SubSink} from "subsink";
@@ -22,7 +21,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.authenticationService.isUserLoggedIn()) {
-      this.router.navigateByUrl("/user/management");
+      this.router.navigateByUrl("/user/users");
     }
   }
 
