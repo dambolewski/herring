@@ -18,7 +18,7 @@ import {BehaviorSubject} from "rxjs";
 })
 export class SettingsUserComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
-  private titleSubject = new BehaviorSubject<string>('Users');
+  private titleSubject = new BehaviorSubject<string>('User Settings');
   public titleActions$ = this.titleSubject.asObservable();
   public user!: User;
   public refreshing!: boolean;

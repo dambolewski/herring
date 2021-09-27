@@ -10,7 +10,7 @@ import {User} from "../../model/user";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private titleSubject = new BehaviorSubject<string>('Users');
+  private titleSubject = new BehaviorSubject<string>('Home');
   public titleActions$ = this.titleSubject.asObservable();
   public user!: User;
 

@@ -18,14 +18,12 @@ import {FileUploadStatus} from "../../model/file-upload.status";
 })
 export class UserInfoComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
-  private titleSubject = new BehaviorSubject<string>('Users');
+  private titleSubject = new BehaviorSubject<string>('User Details');
   public titleActions$ = this.titleSubject.asObservable();
   public user!: User;
   public refreshing!: boolean;
-  public selectedUser!: User;
   public fileName!: string | null;
   public profileImage!: File | null;
-  public editUser = new User();
   private currentUsername!: string;
   public fileStatus = new FileUploadStatus();
 
@@ -41,20 +39,9 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     this.titleSubject.next(title);
   }
 
-  public onSelectUser(selectedUser: User): void {
-    this.selectedUser = selectedUser;
-    document.getElementById('openUserInfo')!.click();
-  }
-
   public onProfileImageChange(event: Event): void {
     this.fileName = (<HTMLInputElement>event.target).files![0].name;
     this.profileImage = (<HTMLInputElement>event.target).files![0];
-  }
-
-  public onEditUser(editUser: User): void {
-    this.editUser = editUser;
-    this.currentUsername = editUser.username;
-    this.clickButton('openUserEdit');
   }
 
 
@@ -68,6 +55,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
           this.authenticationService.addUserToLocalCache(response);
           this.fileName = null;
           this.profileImage = null;
+          this.refreshing = false;
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.firstName + " " + response.lastName + " updated successfully.")
         },
         (errorResponse: HttpErrorResponse) => {

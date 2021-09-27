@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.authenticationService.isUserLoggedIn()) {
-      this.router.navigateByUrl("/users");
+      this.router.navigateByUrl("/home");
     } else {
       this.router.navigateByUrl("/login");
     }
