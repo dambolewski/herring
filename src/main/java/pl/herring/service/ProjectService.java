@@ -9,4 +9,5 @@ public interface ProjectService {
     void addUserToProject(String title, String username);
     Project getProject(String title);
     List<Project> getProjects();
+    void deleteProject(String title);
 }

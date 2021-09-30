@@ -42,4 +42,10 @@ public class ProjectServiceImpl implements ProjectService{
     public List<Project> getProjects() {
         return projectRepository.findAll();
     }
+
+    @Override
+    public void deleteProject(String title) {
+        Project project = projectRepository.findByTitle(title);
+        projectRepository.delete(project);
+    }
 }

@@ -1,12 +1,12 @@
 package pl.herring.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.herring.model.HttpResponse;
 import pl.herring.model.Project;
-import pl.herring.model.User;
+import pl.herring.model.UserToProject;
 import pl.herring.service.ProjectService;
 
 import java.util.List;
@@ -32,14 +32,18 @@ public class ProjectController {
     }
 
     @GetMapping("/project/addUserToProject")
-    public ResponseEntity<?> addUserToProject(@RequestBody UserToProjectForm form){
+    public ResponseEntity<?> addUserToProject(@RequestBody UserToProject form){
         projectService.addUserToProject(form.getTitle(),form.getUsername());
         return new ResponseEntity<>(OK);
     }
-}
 
-@Data
-class UserToProjectForm {
-    private String title;
-    private String username;
+    @DeleteMapping("/project/delete/{title}")
+    public ResponseEntity<HttpResponse> deleteProject(@PathVariable("title") String title) {
+        projectService.deleteProject(title);
+        return response(OK, "Project Deleted Successfully.");
+    }
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
+    }
 }

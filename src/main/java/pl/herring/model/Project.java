@@ -6,20 +6,27 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Project {
+public class Project implements Serializable {
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String title;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {MERGE, PERSIST})
     private Collection<User> users = new ArrayList<>();
+
+    public Project(String title) {
+        this.title = title;
+    }
 }
