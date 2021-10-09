@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
@@ -22,7 +23,12 @@ public class Project implements Serializable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    private String uuid;
     private String title;
+    private String description;
+    private String creator;
+    private boolean trackFlag;
+    private Date creationDate;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {MERGE, PERSIST})
     private Collection<User> users = new ArrayList<>();
 

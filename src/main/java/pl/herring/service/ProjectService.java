@@ -1,13 +1,16 @@
 package pl.herring.service;
 
+import pl.herring.exception.domain.*;
 import pl.herring.model.Project;
 
 import java.util.List;
 
 public interface ProjectService {
-    Project saveProject(Project project);
-    void addUserToProject(String title, String username);
+    Project findProjectByTitle(String title);
+    Project saveProject(String title);
+    void addUserToProject(String title, String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException;
     Project getProject(String title);
     List<Project> getProjects();
     void deleteProject(String title);
+    Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException;
 }

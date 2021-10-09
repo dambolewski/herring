@@ -113,6 +113,26 @@ public class ExceptionHandling {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(ProjectAlreadyContainsUserException.class)
+    public ResponseEntity<HttpResponse> projectAlreadyContainsUserException(ProjectAlreadyContainsUserException exception){
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<HttpResponse> projectNotFoundException(ProjectNotFoundException exception){
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoTitleNorUsernameException.class)
+    public ResponseEntity<HttpResponse> noTitleNorUsernameException(NoTitleNorUsernameException exception){
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoTitleException.class)
+    public ResponseEntity<HttpResponse> noTitleException(NoTitleException exception){
+        return createHttpResponse(NOT_FOUND, exception.getMessage());
+    }
+
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }
