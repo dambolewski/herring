@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {AuthenticationService} from "../../service/authentication.service";
-import {NotificationService} from "../../service/notification.service";
-import {User} from "../../model/user";
+import {AuthenticationService} from "../../../service/authentication.service";
+import {NotificationService} from "../../../service/notification.service";
+import {User} from "../../../model/user";
 import {Subscription} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {NotificationTypeEnum} from "../../enum/notification-type.enum";
-import {HeaderTypeEnum} from "../../enum/header-type.enum";
+import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
+import {HeaderTypeEnum} from "../../../enum/header-type.enum";
 import {SubSink} from "subsink";
 
 @Component({

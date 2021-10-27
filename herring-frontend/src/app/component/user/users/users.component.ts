@@ -1,17 +1,17 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UserService} from "../../service/user.service";
-import {NotificationService} from "../../service/notification.service";
-import {AuthenticationService} from "../../service/authentication.service";
+import {UserService} from "../../../service/user.service";
+import {NotificationService} from "../../../service/notification.service";
+import {AuthenticationService} from "../../../service/authentication.service";
 import {Router} from "@angular/router";
 import {SubSink} from "subsink";
 import {BehaviorSubject} from "rxjs";
-import {User} from "../../model/user";
-import {FileUploadStatus} from "../../model/file-upload.status";
-import {NotificationTypeEnum} from "../../enum/notification-type.enum";
+import {User} from "../../../model/user";
+import {FileUploadStatus} from "../../../model/file-upload.status";
+import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {HttpErrorResponse, HttpEvent, HttpEventType} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
-import {CustomHttpResponse} from "../../model/custom-http-response";
-import {Role} from "../../enum/role.enum";
+import {CustomHttpResponse} from "../../../model/custom-http-response";
+import {Role} from "../../../enum/role.enum";
 
 @Component({
   selector: 'app-users',

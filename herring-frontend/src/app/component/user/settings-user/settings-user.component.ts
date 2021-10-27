@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UserService} from "../../service/user.service";
-import {NotificationService} from "../../service/notification.service";
-import {AuthenticationService} from "../../service/authentication.service";
-import {User} from "../../model/user";
-import {NotificationTypeEnum} from "../../enum/notification-type.enum";
+import {UserService} from "../../../service/user.service";
+import {NotificationService} from "../../../service/notification.service";
+import {AuthenticationService} from "../../../service/authentication.service";
+import {User} from "../../../model/user";
+import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
-import {CustomHttpResponse} from "../../model/custom-http-response";
-import {Role} from "../../enum/role.enum";
+import {CustomHttpResponse} from "../../../model/custom-http-response";
+import {Role} from "../../../enum/role.enum";
 import {SubSink} from "subsink";
 import {BehaviorSubject} from "rxjs";
 

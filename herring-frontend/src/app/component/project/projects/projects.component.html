@@ -1,0 +1,119 @@
+<div class="container">
+  <div class="row mb-2 mt-2 text-center">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+      <h5>Herring</h5>
+      <small *ngIf="titleActions$ | async as title">{{title}}</small>
+    </div>
+    <div class="col-md-4">
+    </div>
+  </div>
+
+  <!-- nav bar -->
+  <nav class="navbar navbar-expand-md breadcrumb">
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="nav nav-pills">
+        <a class="nav-item nav-link ml-3" (click)="changeTitle('Home')" data-toggle="tab"
+           routerLink="/home">
+          <i class="fas fa-h-square"></i>
+          Home
+        </a>
+        <a class="nav-item nav-link ml-3" (click)="changeTitle('Users')" data-toggle="tab"
+           routerLink="/users">
+          <i class="fa fa-users"></i>
+          Users
+        </a>
+        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
+           routerLink="/user-settings" data-toggle="tab">
+          <i class="fa fa-cogs"></i>
+          Settings
+        </a>
+        <a class="nav-item nav-link active ml-1" routerLink="/project-list" data-toggle="tab">
+          <i class="fas fa-tasks"></i>
+          Projects
+        </a>
+        <a class="nav-item nav-link move-right ml-3" (click)="changeTitle('Details')"
+           routerLink="/user-details" data-toggle="tab">
+          Welcome, {{user?.firstName}}
+          <i class="fa fa-user"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- main content -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewProject">
+    <i class="fas fa-plus"></i>
+    New Project
+  </button>
+
+  <!-- project table -->
+  <div class="tab-pane fade show active" id="users">
+    <table class="table table-hover">
+      <thead class="table-borderless">
+      <tr class="text-center">
+        <th>UUID</th>
+        <th>Title</th>
+        <th>Track</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let appProject of projects">
+      <tr class="text-center">
+        <td>{{appProject.uuid}}</td>
+        <td>{{appProject.title}}</td>
+        <td>
+          <span [hidden]="!appProject?.trackFlag" class="badge badge-success">Active</span>
+          <span [hidden]="appProject?.trackFlag" class="badge badge-danger">Inactive</span>
+        </td>
+        <td class="">
+          <div class="btn-group">
+            <button class="btn btn-outline-info">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button [hidden]="!isAdmin" class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- add project modal -->
+  <div class="modal fade" id="addNewProject" tabindex="-1" role="dialog" aria-labelledby="addNewProjectLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addNewProjectLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <form #newProjectForm="ngForm" (ngSubmit)="onAddNewProject(newProjectForm)">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" name="title" required ngModel class="form-control">
+              </div>
+              <button type="submit" style="display: none;" id="new-project-save"></button>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-project-close">Close</button>
+          <button type="button" (click)="saveNewProject()" [disabled]="newProjectForm.invalid" class="btn btn-primary">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

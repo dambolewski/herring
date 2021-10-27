@@ -1,12 +1,13 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {LoginComponent} from './component/login/login.component';
-import {RegisterComponent} from './component/register/register.component';
+import {LoginComponent} from './component/user/login/login.component';
+import {RegisterComponent} from './component/user/register/register.component';
 import {AuthenticationGuard} from "./guard/authentication.guard";
-import {SettingsUserComponent} from "./component/settings-user/settings-user.component";
-import {UserInfoComponent} from "./component/user-info/user-info.component";
-import {UsersComponent} from "./component/users/users.component";
+import {SettingsUserComponent} from "./component/user/settings-user/settings-user.component";
+import {UserInfoComponent} from "./component/user/user-info/user-info.component";
+import {UsersComponent} from "./component/user/users/users.component";
 import {HomeComponent} from "./component/home/home.component";
+import {ProjectsComponent} from "./component/project/projects/projects.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path: 'user-settings', component: SettingsUserComponent, canActivate: [AuthenticationGuard]},
   {path: 'user-details', component: UserInfoComponent, canActivate: [AuthenticationGuard]},
   {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
+  {path: 'project-list', component: ProjectsComponent, canActivate: [AuthenticationGuard]},
   {path: '', redirectTo: 'login', pathMatch: 'full'}
 ];
 

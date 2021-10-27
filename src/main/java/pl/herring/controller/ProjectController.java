@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import pl.herring.exception.domain.*;
 import pl.herring.model.HttpResponse;
 import pl.herring.model.Project;
-import pl.herring.model.User;
 import pl.herring.model.UserToProject;
 import pl.herring.service.ProjectService;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -31,8 +29,8 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/save")
-    public ResponseEntity<Project> saveProject(@RequestBody Project project) {
-        Project newProject = projectService.saveProject(project.getTitle());
+    public ResponseEntity<Project> saveProject(@RequestParam("title") String title) {
+        Project newProject = projectService.saveProject(title);
         return new ResponseEntity<>(newProject, OK);
     }
 

@@ -1,15 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UserService} from "../../service/user.service";
-import {NotificationService} from "../../service/notification.service";
-import {AuthenticationService} from "../../service/authentication.service";
+import {UserService} from "../../../service/user.service";
+import {NotificationService} from "../../../service/notification.service";
+import {AuthenticationService} from "../../../service/authentication.service";
 import {Router} from "@angular/router";
-import {User} from "../../model/user";
-import {NotificationTypeEnum} from "../../enum/notification-type.enum";
+import {User} from "../../../model/user";
+import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {HttpErrorResponse, HttpEvent, HttpEventType} from "@angular/common/http";
-import {Role} from "../../enum/role.enum";
+import {Role} from "../../../enum/role.enum";
 import {SubSink} from "subsink";
 import {BehaviorSubject} from "rxjs";
-import {FileUploadStatus} from "../../model/file-upload.status";
+import {FileUploadStatus} from "../../../model/file-upload.status";
 
 @Component({
   selector: 'app-user-info',
