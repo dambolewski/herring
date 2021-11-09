@@ -34,10 +34,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project saveProject(String title) {
+    public Project saveProject(String title, String creator) {
         Project project = new Project(title);
         project.setUuid(generateUuid());
         project.setCreationDate(new Date());
+        project.setCreator(creator);
         project.setTrackFlag(false);
         return projectRepository.save(project);
     }

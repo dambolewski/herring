@@ -22,9 +22,10 @@ export class ProjectService {
     return this.http.post<Project>(this.host + "/herring/project/save", formData);
   }
 
-  public createProjectFormDate(project: Project): FormData {
+  public createProjectFormDate(project: Project, loggedUsername: string): FormData {
     const formData = new FormData();
     formData.append('title', project.title);
+    formData.append('creator', loggedUsername);
     return formData;
   }
 

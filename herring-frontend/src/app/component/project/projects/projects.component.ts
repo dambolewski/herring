@@ -42,7 +42,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   public onAddNewProject(newProjectForm: NgForm): void {
-    const formData = this.projectService.createProjectFormDate(newProjectForm.value);
+    const formData = this.projectService.createProjectFormDate(newProjectForm.value, this.user.username);
     this.subs.add(
       this.projectService.addProject(formData).subscribe(
         (response: Project) => {
@@ -59,7 +59,7 @@ export class ProjectsComponent implements OnInit {
   }
 
 
-  private getProjects(showNotification: boolean) {
+  public getProjects(showNotification: boolean) {
     this.refreshing = true;
     this.subs.add(
       this.projectService.getProjects().subscribe(
@@ -82,7 +82,7 @@ export class ProjectsComponent implements OnInit {
     this.subs.add(
       this.projectService.deleteProject(title).subscribe(
         (response: CustomHttpResponse) => {
-          this.sendNotification(NotificationTypeEnum.SUCCESS, 'User deleted successfully');
+          this.sendNotification(NotificationTypeEnum.SUCCESS, 'Project deleted successfully');
           this.getProjects(false);
         },
         (errorResponse: HttpErrorResponse) => {

@@ -43,13 +43,18 @@
   </nav>
 
   <!-- main content -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewProject">
-    <i class="fas fa-plus"></i>
-    New Project
-  </button>
+  <div class="tab-pane fade show active" id="options">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewProject">
+      <i class="fas fa-plus"></i>
+      New Project
+    </button>
+    <button type="button" (click)="getProjects(true)" class="btn btn-info" style="float:right">
+      <i *ngIf="refreshing" class="fas fa-sync fa-spin"></i><i *ngIf="!refreshing" class="fas fa-sync"></i>
+    </button>
+  </div>
 
   <!-- project table -->
-  <div class="tab-pane fade show active" id="users">
+  <div class="tab-pane fade show active" id="projects">
     <table class="table table-hover">
       <thead class="table-borderless">
       <tr class="text-center">
@@ -63,6 +68,7 @@
       <tr class="text-center">
         <td>{{appProject.uuid}}</td>
         <td>{{appProject.title}}</td>
+        <td>{{appProject.creator}}</td>
         <td>
           <span [hidden]="!appProject?.trackFlag" class="badge badge-success">Active</span>
           <span [hidden]="appProject?.trackFlag" class="badge badge-danger">Inactive</span>
@@ -70,7 +76,7 @@
         <td class="">
           <div class="btn-group">
             <button class="btn btn-outline-info">
-              <i class="fas fa-edit"></i>
+              <i class="fas fa-external-link-alt"></i>
             </button>
             <button [hidden]="!isAdmin" class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
               <i class="fas fa-trash"></i>

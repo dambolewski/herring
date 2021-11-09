@@ -29,8 +29,8 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/save")
-    public ResponseEntity<Project> saveProject(@RequestParam("title") String title) {
-        Project newProject = projectService.saveProject(title);
+    public ResponseEntity<Project> saveProject(@RequestParam("title") String title, @RequestParam("creator") String creator) {
+        Project newProject = projectService.saveProject(title, creator);
         return new ResponseEntity<>(newProject, OK);
     }
 
