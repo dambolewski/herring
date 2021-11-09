@@ -34,10 +34,10 @@ public class ProjectController extends ExceptionHandling {
         return new ResponseEntity<>(newProject, OK);
     }
 
-    @GetMapping("/project/addUserToProject")
-    public ResponseEntity<?> addUserToProject(@RequestBody UserToProject form) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException {
-        projectService.addUserToProject(form.getTitle(), form.getUsername());
-        return new ResponseEntity<>(form, OK);
+    @PostMapping("/project/addUserToProject")
+    public ResponseEntity<?> addUserToProject(@RequestParam("title") String title, @RequestParam("username") String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException {
+        projectService.addUserToProject(title, username);
+        return new ResponseEntity<>(OK, OK);
     }
 
     @DeleteMapping("/project/delete/{title}")

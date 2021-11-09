@@ -32,4 +32,15 @@ export class ProjectService {
   public deleteProject(title: string): Observable<CustomHttpResponse> {
     return this.http.delete<CustomHttpResponse>(this.host + "/herring/project/delete/" + title);
   }
+
+  public addUserToProject(formData: FormData): Observable<Project>{
+    return this.http.post<Project>(this.host + "/herring/project/addUserToProject", formData);
+  }
+
+  public addU2PFormData(project: Project, username: string): FormData {
+    const formData = new FormData();
+    formData.append('title', project.title);
+    formData.append('username', username);
+    return formData;
+  }
 }

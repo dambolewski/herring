@@ -43,18 +43,20 @@ export class ProjectsComponent implements OnInit {
 
   public onAddNewProject(newProjectForm: NgForm): void {
     const formData = this.projectService.createProjectFormDate(newProjectForm.value, this.user.username);
+    const formData2 = this.projectService.addU2PFormData(newProjectForm.value, this.user.username);
     this.subs.add(
       this.projectService.addProject(formData).subscribe(
         (response: Project) => {
           this.clickButton('new-project-close');
           this.getProjects(false);
           newProjectForm.reset();
+          this.projectService.addUserToProject(formData2).subscribe();
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.title + " created successfully.");
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
         }
-      )
+      ),
     );
   }
 
