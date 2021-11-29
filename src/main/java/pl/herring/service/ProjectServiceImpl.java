@@ -34,9 +34,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project saveProject(String title, String creator) {
+    public Project saveProject(String title, String creator) throws NoTitleException, ProjectAlreadyExist {
+        validateNewProject(title);
         Project project = new Project(title);
         project.setUuid(generateUuid());
+        project.setDescription("Simple Description");
         project.setCreationDate(new Date());
         project.setCreator(creator);
         project.setTrackFlag(false);
@@ -86,6 +88,17 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException(PROJECT_NOT_FOUND_EXCEPTION + title);
         } else if (userRepository.findByUsername(username) == null) {
             throw new UsernameExistException(NO_USER_FOUND_BY_USERNAME + username);
+        } else {
+            return project;
+        }
+    }
+
+    private Project validateNewProject(String title) throws ProjectAlreadyExist, NoTitleException {
+        Project project = projectRepository.findByTitle(title);
+        if(projectRepository.findAll().contains(project)){
+            throw new ProjectAlreadyExist(PROJECT_ALREADY_EXIST);
+        } else if(isBlank(title)){
+            throw new NoTitleException(NO_TITLE);
         } else {
             return project;
         }

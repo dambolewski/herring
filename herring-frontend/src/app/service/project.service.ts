@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Project} from "../model/project";
 import {CustomHttpResponse} from "../model/custom-http-response";
+import {User} from "../model/user";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,10 @@ export class ProjectService {
     return this.http.get<Project[]>(this.host + "/herring/project/list");
   }
 
+  public getProject(title: string): Observable<Project> {
+    return this.http.get<Project>(this.host + "/herring/project/find/" + title)
+  }
+
   public addProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/save", formData);
   }
@@ -29,11 +34,25 @@ export class ProjectService {
     return formData;
   }
 
+  public createProjectDetailsFormDate(currentTitle: string, project: Project, creator: string): FormData {
+    const formData = new FormData();
+    formData.append('currentTitle', currentTitle)
+    formData.append('title', project.title);
+    formData.append('trackFlag', JSON.stringify(project.trackFlag));
+    formData.append('description', project.description);
+    formData.append('creator', creator);
+    return formData;
+  }
+
+  public updateProject(formData: FormData): Observable<Project> {
+    return this.http.post<Project>(this.host + "/herring/project/update", formData);
+  }
+
   public deleteProject(title: string): Observable<CustomHttpResponse> {
     return this.http.delete<CustomHttpResponse>(this.host + "/herring/project/delete/" + title);
   }
 
-  public addUserToProject(formData: FormData): Observable<Project>{
+  public addUserToProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/addUserToProject", formData);
   }
 

@@ -24,6 +24,7 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String uuid;
+    @Column(unique = true)
     private String title;
     private String description;
     private String creator;

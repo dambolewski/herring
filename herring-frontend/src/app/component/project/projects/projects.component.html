@@ -76,7 +76,7 @@
         </td>
         <td class="">
           <div class="btn-group">
-            <button class="btn btn-outline-info">
+            <button class="btn btn-outline-info" (click)="onSelectProject(appProject)">
               <i class="fas fa-external-link-alt"></i>
             </button>
             <button [hidden]="!isAdmin" class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
@@ -88,7 +88,6 @@
       </tbody>
     </table>
   </div>
-
 
   <!-- add project modal -->
   <div class="modal fade" id="addNewProject" tabindex="-1" role="dialog" aria-labelledby="addNewProjectLabel"

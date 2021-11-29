@@ -133,6 +133,12 @@ public class ExceptionHandling {
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler(ProjectAlreadyExist.class)
+    public ResponseEntity<HttpResponse> projectAlreadyExistException(ProjectAlreadyExist exception){
+        return createHttpResponse(NOT_FOUND, exception.getMessage());
+    }
+
+
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }

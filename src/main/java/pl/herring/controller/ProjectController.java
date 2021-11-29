@@ -29,7 +29,7 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/save")
-    public ResponseEntity<Project> saveProject(@RequestParam("title") String title, @RequestParam("creator") String creator) {
+    public ResponseEntity<Project> saveProject(@RequestParam("title") String title, @RequestParam("creator") String creator) throws NoTitleException, ProjectAlreadyExist {
         Project newProject = projectService.saveProject(title, creator);
         return new ResponseEntity<>(newProject, OK);
     }

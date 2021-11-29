@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProjectService {
     Project findProjectByTitle(String title);
-    Project saveProject(String title, String creator);
+    Project saveProject(String title, String creator) throws NoTitleException, ProjectAlreadyExist;
     void addUserToProject(String title, String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException;
     Project getProject(String title);
     List<Project> getProjects();

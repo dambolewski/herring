@@ -8,6 +8,7 @@ import {UserInfoComponent} from "./component/user/user-info/user-info.component"
 import {UsersComponent} from "./component/user/users/users.component";
 import {HomeComponent} from "./component/home/home.component";
 import {ProjectsComponent} from "./component/project/projects/projects.component";
+import {ProjectDetailsComponent} from "./component/project/project-details/project-details.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path: 'user-details', component: UserInfoComponent, canActivate: [AuthenticationGuard]},
   {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
   {path: 'project-list', component: ProjectsComponent, canActivate: [AuthenticationGuard]},
+  {path: 'project-details', component: ProjectDetailsComponent, canActivate: [AuthenticationGuard]},
   {path: '', redirectTo: 'login', pathMatch: 'full'}
 ];
 

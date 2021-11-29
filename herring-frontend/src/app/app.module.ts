@@ -18,6 +18,7 @@ import { SettingsUserComponent } from './component/user/settings-user/settings-u
 import { UserInfoComponent } from './component/user/user-info/user-info.component';
 import { HomeComponent } from './component/home/home.component';
 import { ProjectsComponent } from './component/project/projects/projects.component';
+import { ProjectDetailsComponent } from './component/project/project-details/project-details.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ProjectsComponent } from './component/project/projects/projects.compone
     SettingsUserComponent,
     UserInfoComponent,
     HomeComponent,
-    ProjectsComponent
+    ProjectsComponent,
+    ProjectDetailsComponent,
   ],
     imports: [
         BrowserModule,

@@ -5,4 +5,5 @@ import pl.herring.model.Project;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Project findByTitle(String title);
+    Project findByUuid(String uuid);
 }

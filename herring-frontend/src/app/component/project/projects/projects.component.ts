@@ -11,6 +11,7 @@ import {Project} from "../../../model/project";
 import {ProjectService} from "../../../service/project.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {CustomHttpResponse} from "../../../model/custom-http-response";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-projects',
@@ -24,8 +25,9 @@ export class ProjectsComponent implements OnInit {
   public user!: User;
   public projects!: Project[] | null;
   public refreshing!: boolean;
+  public projectTest!: Project;
 
-  constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService) {
+  constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -48,9 +50,12 @@ export class ProjectsComponent implements OnInit {
       this.projectService.addProject(formData).subscribe(
         (response: Project) => {
           this.clickButton('new-project-close');
-          this.getProjects(false);
           newProjectForm.reset();
-          this.projectService.addUserToProject(formData2).subscribe();
+          this.projectService.addUserToProject(formData2).subscribe(
+            (response: Project) => {
+              this.getProjects(false);
+            }
+          );
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.title + " created successfully.");
         },
         (errorResponse: HttpErrorResponse) => {
@@ -58,6 +63,11 @@ export class ProjectsComponent implements OnInit {
         }
       ),
     );
+  }
+
+  public onSelectProject(selectedProject: Project): void {
+      this.projectTest = selectedProject;
+      this.router.navigateByUrl('/project-details', {state: this.projectTest});
   }
 
 
@@ -80,9 +90,9 @@ export class ProjectsComponent implements OnInit {
     );
   }
 
-  public onDelete(title: string): void {
+  public onDelete(uuid: string): void {
     this.subs.add(
-      this.projectService.deleteProject(title).subscribe(
+      this.projectService.deleteProject(uuid).subscribe(
         (response: CustomHttpResponse) => {
           this.sendNotification(NotificationTypeEnum.SUCCESS, 'Project deleted successfully');
           this.getProjects(false);

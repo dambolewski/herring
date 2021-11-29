@@ -1,0 +1,188 @@
+<div class="container">
+  <div class="row mb-2 mt-2 text-center">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+      <h5>Herring</h5>
+      <small *ngIf="titleActions$ | async as title">{{title}}</small>
+    </div>
+    <div class="col-md-4">
+    </div>
+  </div>
+
+  <!-- nav bar -->
+  <nav class="navbar navbar-expand-md breadcrumb">
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="nav nav-pills">
+        <a class="nav-item nav-link ml-3" (click)="changeTitle('Home')" data-toggle="tab"
+           routerLink="/home">
+          <i class="fas fa-h-square"></i>
+          Home
+        </a>
+        <a class="nav-item nav-link ml-3" (click)="changeTitle('Users')" data-toggle="tab"
+           routerLink="/users">
+          <i class="fa fa-users"></i>
+          Users
+        </a>
+        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
+           routerLink="/user-settings" data-toggle="tab">
+          <i class="fa fa-cogs"></i>
+          Settings
+        </a>
+        <a class="nav-item nav-link active ml-1" routerLink="/project-list" data-toggle="tab">
+          <i class="fas fa-tasks"></i>
+          Projects
+        </a>
+        <a class="nav-item nav-link move-right ml-3" (click)="changeTitle('Details')"
+           routerLink="/user-details" data-toggle="tab">
+          Welcome, {{user?.firstName}}
+          <i class="fa fa-user"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- main content -->
+  <div class="tab-pane fade show active" id="projectDetails">
+    <div class="tab-pane fade show active" id="profile">
+      <div class="container">
+        <div class="row flex-lg-nowrap">
+          <div class="col">
+            <div class="row">
+              <div class="col mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <form #projectDetailsForm="ngForm"
+                          (ngSubmit)="onProjectDetailsUpdate(projectDetailsForm.value)"
+                          class="form" novalidate>
+                      <div class="e-profile">
+                        <div class="row">
+                          <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                            <div class="text-center text-sm-left mb-2 mb-sm-0">
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <input type="text" name="title" required [(ngModel)]="project.title"
+                                           class="form-control" [disabled]="!isAdminOrManager">
+                                  </div>
+                                </div>
+                              </div>
+                              <p class="mb-0">Creator: {{project?.creator}}</p>
+                            </div>
+                            <div class="text-center text-sm-right">
+                              <div class="text-muted"><small>Created {{project?.creationDate | date:'medium'}}</small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-content pt-3">
+                          <div class="tab-pane active">
+                            <div class="row">
+                              <div class="col">
+                                <div class="row">
+                                  <div class="col">
+                                    <div class="form-group">
+                                      <label for="description">Description</label>
+                                      <textarea class="form-control" id="description" rows="2" name="description"
+                                                required [(ngModel)]="project.description"></textarea>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-12 col-sm-5 offset-sm-1 mb-3">
+                                <div class="mb-2"><b>Track</b></div>
+                                <div class="row">
+                                  <div class="col">
+                                    <div class="custom-controls-stacked px-2">
+                                      <div class="form-check">
+                                        <label class="form-check-label">
+                                          <input type="checkbox" name="trackFlag" [disabled]="!isAdmin"
+                                                 [(ngModel)]="project.trackFlag"
+                                                 class="form-check-input">Active <small [hidden]="isAdmin">(read only)</small>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col d-flex justify-content-end">
+                                <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager" [disabled]="projectDetailsForm.invalid">
+                                  <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
+                                  <span *ngIf="refreshing">Loading...</span>
+                                  <span *ngIf="!refreshing">Save Changes</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3 mb-3">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <button (click)="onDelete(project.title)" class="btn btn-block btn-secondary"
+                            routerLink="/project-list">
+                      <span>Delete</span>
+                      <i class="fas fa-sing-in-alt ml-1"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title font-weight-bold">Add User:</h6>
+
+                      <form #addU2PForm="ngForm" (ngSubmit)="onProjectDetailsAddU2P(addU2PForm.value)"
+                            class="form" novalidate>
+                        <div class="row">
+                          <div class="col">
+                            <div class="row">
+                              <div class="col mb-3">
+                                <div class="form-group">
+                                  <select name="username" [disabled]="!isAdmin" required [(ngModel)]="user.username"
+                                          class="form-control">
+                                    <option *ngFor="let user of usersAll" [value]="user.username">{{user.username}}</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager">
+                              <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
+                              <span *ngIf="refreshing">Loading...</span>
+                              <span *ngIf="!refreshing">Save Changes</span>
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="card mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title font-weight-bold">Participating users:</h6>
+                      <h6 *ngFor="let user of users" class="card-text">{{user.username}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

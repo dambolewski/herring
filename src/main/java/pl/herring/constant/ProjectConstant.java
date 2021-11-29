@@ -6,4 +6,5 @@ public class ProjectConstant {
     public static final String USER_ASSIGNED_ALREADY = "User is already assigned to this project.";
     public static final String NO_TITLE_NOR_USERNAME = "There is no title nor username given.";
     public static final String NO_TITLE = "Project title cannot be empty.";
+    public static final String PROJECT_ALREADY_EXIST = "Project with this title already exist.";
 }
