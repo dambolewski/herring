@@ -135,6 +135,11 @@ public class ExceptionHandling {
 
     @ExceptionHandler(ProjectAlreadyExist.class)
     public ResponseEntity<HttpResponse> projectAlreadyExistException(ProjectAlreadyExist exception){
+        return createHttpResponse(INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoProjectNorTaskGroupException.class)
+    public ResponseEntity<HttpResponse> noProjectNorTaskGroupException(NoProjectNorTaskGroupException exception){
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
 

@@ -43,71 +43,45 @@
   </nav>
 
   <!-- main content -->
-  <div class="tab-pane fade show active" id="options">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewProject">
-      <i class="fas fa-plus"></i>
-      New Project
-    </button>
-    <button type="button" (click)="getProjects(true)" class="btn btn-info" style="float:right">
-      <i *ngIf="refreshing" class="fas fa-sync fa-spin"></i><i *ngIf="!refreshing" class="fas fa-sync"></i>
-    </button>
-  </div>
-
-  <!-- project table -->
-  <div class="tab-pane fade show active" id="projects">
-    <table class="table table-hover">
-      <thead class="table-borderless">
-      <tr class="text-center">
-        <th>UUID</th>
-        <th>Title</th>
-        <th>Creator</th>
-        <th>Track</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody *ngFor="let appProject of projects">
-      <tr class="text-center">
-        <td (click)="onSelectToOperations(appProject)">{{appProject.uuid}}</td>
-        <td (click)="onSelectToOperations(appProject)">{{appProject.title}}</td>
-        <td>{{appProject.creator}}</td>
-        <td>
-          <span [hidden]="!appProject?.trackFlag" class="badge badge-success">Active</span>
-          <span [hidden]="appProject?.trackFlag" class="badge badge-danger">Inactive</span>
-        </td>
-        <td class="">
-          <div class="btn-group">
-            <button class="btn btn-outline-info" (click)="onSelectProject(appProject)">
-              <i class="fas fa-external-link-alt"></i>
-            </button>
-            <button [hidden]="!isAdmin" class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
-              <i class="fas fa-trash"></i>
-            </button>
+  <div class="tab-pane fade show active" id="projectOperations">
+    <div class="tab-pane fade show active" id="options">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNewTaskGroup">
+        <i class="fas fa-plus"></i>
+        New TaskGroup
+      </button>
+    </div>
+    <div class="container">
+      <div class="card-group">
+      <div *ngFor="let taskGroup of tasksGroups">
+          <div class="card">
+            <div class="card_body">
+              {{taskGroup.title}}
+            </div>
           </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- add project modal -->
-  <div class="modal fade" id="addNewProject" tabindex="-1" role="dialog" aria-labelledby="addNewProjectLabel"
+  <!-- add task-group modal -->
+  <div class="modal fade" id="addNewTaskGroup" tabindex="-1" role="dialog" aria-labelledby="addNewTaskGroupLabel"
        aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addNewProjectLabel">Add new project</h5>
+          <h5 class="modal-title" id="addNewTaskGroupLabel">Add new task group</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <div>
-            <form #newProjectForm="ngForm" (ngSubmit)="onAddNewProject(newProjectForm)">
+            <form #newProjectForm="ngForm" (ngSubmit)="onAddNewTaskGroup(newProjectForm)">
               <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" name="title" required ngModel class="form-control">
               </div>
-              <button type="submit" style="display: none;" id="new-project-save"></button>
+              <button type="submit" style="display: none;" id="new-task-group-save"></button>
             </form>
           </div>
         </div>
@@ -120,6 +94,4 @@
       </div>
     </div>
   </div>
-
-
 </div>

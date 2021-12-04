@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import pl.herring.exception.domain.*;
 import pl.herring.model.HttpResponse;
 import pl.herring.model.Project;
-import pl.herring.model.UserToProject;
 import pl.herring.service.ProjectService;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
+import static pl.herring.constant.TaskGroupConstant.TASKGROUP_ADDED_SUCCESSFULLY;
+import static pl.herring.constant.TaskGroupConstant.TASKGROUP_DELETED_SUCCESSFULLY;
 
 @AllArgsConstructor
 @RestController
@@ -38,6 +39,12 @@ public class ProjectController extends ExceptionHandling {
     public ResponseEntity<?> addUserToProject(@RequestParam("title") String title, @RequestParam("username") String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException {
         projectService.addUserToProject(title, username);
         return new ResponseEntity<>(OK, OK);
+    }
+
+    @PostMapping("/project/deleteUserFromProject")
+    public ResponseEntity<?> deleteUserFromProject(@RequestParam("title") String title, @RequestParam("username") String username) {
+        projectService.deleteUserFromProject(title,username);
+        return new ResponseEntity<>(OK,OK);
     }
 
     @DeleteMapping("/project/delete/{title}")
@@ -66,5 +73,15 @@ public class ProjectController extends ExceptionHandling {
         return new ResponseEntity<>(updatedProject, OK);
     }
 
+    @PostMapping("/project/saveTaskGroup")
+    public ResponseEntity<HttpResponse> saveTaskGroup(@RequestParam("title") String projectTitle, @RequestParam("tgTitle") String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
+        projectService.saveTaskGroup(projectTitle,taskGroupTitle);
+        return response(OK,TASKGROUP_ADDED_SUCCESSFULLY);
+    }
 
+    @DeleteMapping("/project/deleteTaskGroup")
+    public ResponseEntity<HttpResponse> deleteTaskGroup(@RequestParam("title") String title, @RequestParam("id") Long id){
+        projectService.deleteTaskGroup(title,id);
+        return response(OK,TASKGROUP_DELETED_SUCCESSFULLY);
+    }
 }

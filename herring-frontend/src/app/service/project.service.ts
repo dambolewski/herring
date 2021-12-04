@@ -5,6 +5,7 @@ import {Observable} from "rxjs";
 import {Project} from "../model/project";
 import {CustomHttpResponse} from "../model/custom-http-response";
 import {User} from "../model/user";
+import {TaskGroup} from "../model/task-group";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,10 @@ export class ProjectService {
 
   public addProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/save", formData);
+  }
+
+  public addTaskGroup(formData: FormData): Observable<Project> {
+    return this.http.post<Project>(this.host+"/herring/project/saveTaskGroup", formData);
   }
 
   public createProjectFormDate(project: Project, loggedUsername: string): FormData {
@@ -56,10 +61,21 @@ export class ProjectService {
     return this.http.post<Project>(this.host + "/herring/project/addUserToProject", formData);
   }
 
+  public deleteUserFromProject(formData: FormData): Observable<Project> {
+    return this.http.post<Project>(this.host + "/herring/project/deleteUserFromProject", formData);
+  }
+
   public addU2PFormData(project: Project, username: string): FormData {
     const formData = new FormData();
     formData.append('title', project.title);
     formData.append('username', username);
+    return formData;
+  }
+
+  public addTaskGroupFromData(title: string, taskGroup: TaskGroup): FormData {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('tgTitle', taskGroup.title);
     return formData;
   }
 }

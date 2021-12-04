@@ -109,6 +109,9 @@
                               </div>
                             </div>
                             <div class="row">
+                              <div class="col d-flex">
+                                <button type="button" class="btn btn-primary" routerLink="/project-list">Go Back <i class="fas fa-arrow-circle-left"></i></button>
+                              </div>
                               <div class="col d-flex justify-content-end">
                                 <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager" [disabled]="projectDetailsForm.invalid">
                                   <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
@@ -127,7 +130,7 @@
               <div class="col-12 col-md-3 mb-3">
                 <div class="card mb-3">
                   <div class="card-body">
-                    <button (click)="onDelete(project.title)" class="btn btn-block btn-secondary"
+                    <button (click)="onDelete(project.title)" class="btn btn-block btn-danger"
                             routerLink="/project-list">
                       <span>Delete</span>
                       <i class="fas fa-sing-in-alt ml-1"></i>
@@ -148,7 +151,7 @@
                                 <div class="form-group">
                                   <select name="username" [disabled]="!isAdmin" required [(ngModel)]="user.username"
                                           class="form-control">
-                                    <option *ngFor="let user of usersAll" [value]="user.username">{{user.username}}</option>
+                                    <option *ngFor="let user of getUsersToSelect(usersAll!)" [value]="user.username">{{user.username}}</option>
                                   </select>
                                 </div>
                               </div>
@@ -166,7 +169,6 @@
                           </div>
                         </div>
                       </form>
-
                     </div>
                   </div>
                 </div>
@@ -174,7 +176,11 @@
                   <div class="card">
                     <div class="card-body">
                       <h6 class="card-title font-weight-bold">Participating users:</h6>
-                      <h6 *ngFor="let user of users" class="card-text">{{user.username}}</h6>
+                      <h6 *ngFor="let user of users" class="card-text">{{user.username}}
+                        <button class="btn btn-secondary" (click)="deleteUserFromProject(user)">
+                          <i class="fas fa-user-minus"></i>
+                        </button>
+                      </h6>
                     </div>
                   </div>
                 </div>

@@ -19,6 +19,7 @@ import { UserInfoComponent } from './component/user/user-info/user-info.componen
 import { HomeComponent } from './component/home/home.component';
 import { ProjectsComponent } from './component/project/projects/projects.component';
 import { ProjectDetailsComponent } from './component/project/project-details/project-details.component';
+import { ProjectOperationalComponent } from './component/project/project-operational/project-operational.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ProjectDetailsComponent } from './component/project/project-details/pro
     HomeComponent,
     ProjectsComponent,
     ProjectDetailsComponent,
+    ProjectOperationalComponent,
   ],
     imports: [
         BrowserModule,

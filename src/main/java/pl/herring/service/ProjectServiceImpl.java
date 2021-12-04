@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.herring.constant.ProjectConstant;
 import pl.herring.exception.domain.*;
 import pl.herring.model.Project;
+import pl.herring.model.TaskGroup;
 import pl.herring.model.User;
 import pl.herring.repository.ProjectRepository;
+import pl.herring.repository.TaskGroupRepository;
 import pl.herring.repository.UserRepository;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -19,6 +21,7 @@ import static pl.herring.constant.UserConstant.NO_USER_FOUND_BY_USERNAME;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -27,6 +30,7 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
     private UserRepository userRepository;
     private ProjectRepository projectRepository;
+    private TaskGroupRepository taskGroupRepository;
 
     @Override
     public Project findProjectByTitle(String title) {
@@ -51,6 +55,29 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findByTitle(title);
         validateUserToProject(title, username);
         project.getUsers().add(user);
+    }
+
+
+    @Override
+    public void deleteUserFromProject(String title, String username) {
+        Project project = projectRepository.findByTitle(title);
+        User user = userRepository.findByUsername(username);
+        project.getUsers().remove(user);
+    }
+
+    @Override
+    public void saveTaskGroup(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
+        validateTaskGroupToProject(projectTitle, taskGroupTitle);
+        Project project = projectRepository.findByTitle(projectTitle);
+        project.addTaskGroup(new TaskGroup(taskGroupTitle));
+    }
+
+    @Override
+    public void deleteTaskGroup(String title, Long id) {
+        Project project = projectRepository.findByTitle(title);
+        Optional<TaskGroup> optional = taskGroupRepository.findById(id);
+        TaskGroup taskGroup = optional.get();
+        project.deleteTaskGroup(taskGroup);
     }
 
     @Override
@@ -95,9 +122,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     private Project validateNewProject(String title) throws ProjectAlreadyExist, NoTitleException {
         Project project = projectRepository.findByTitle(title);
-        if(projectRepository.findAll().contains(project)){
+        if (projectRepository.findAll().contains(project)) {
             throw new ProjectAlreadyExist(PROJECT_ALREADY_EXIST);
-        } else if(isBlank(title)){
+        } else if (isBlank(title)) {
             throw new NoTitleException(NO_TITLE);
         } else {
             return project;
@@ -116,6 +143,17 @@ public class ProjectServiceImpl implements ProjectService {
             throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
         } else if (project.getUsers().contains(user)) {
             throw new ProjectNotFoundException(USER_ASSIGNED_ALREADY);
+        } else {
+            return null;
+        }
+    }
+
+    private Project validateTaskGroupToProject(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
+        Project project = findProjectByTitle(projectTitle);
+        if (isBlank(projectTitle) || isBlank(taskGroupTitle)) {
+            throw new NoProjectNorTaskGroupException(NOT_PROJECT_NOR_TASKGROUP);
+        } else if (project == null) {
+            throw new ProjectNotFoundException(PROJECT_NOT_FOUND_EXCEPTION + projectTitle);
         } else {
             return null;
         }

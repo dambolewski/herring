@@ -136,4 +136,9 @@ export class ProjectsComponent implements OnInit {
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
+
+  onSelectToOperations(appProject: Project) {
+    this.projectTest = appProject;
+    this.router.navigateByUrl('/project-operations', {state: this.projectTest});
+  }
 }

@@ -28,7 +28,8 @@ export class ProjectDetailsComponent implements OnInit {
   public oldTitle!: string;
   public users!: User[];
   public usersAll!: User[] | null;
-
+  public userTest!: User;
+  public usersToSelect!: User[];
   constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
 
@@ -36,7 +37,6 @@ export class ProjectDetailsComponent implements OnInit {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.project = history.state;
     this.getU2P(true);
-    /*        this.users = Object.values(this.project)[7];*/
     this.oldTitle = this.project.title;
     this.usersAll = this.userService.getUsersFromLocalCache();
   }
@@ -48,7 +48,7 @@ export class ProjectDetailsComponent implements OnInit {
       this.projectService.updateProject(formData).subscribe(
         (response: Project) => {
           this.refreshing = false;
-          this.sendNotification(NotificationTypeEnum.SUCCESS, projectUpdate.title + " updated successfully.")
+          this.sendNotification(NotificationTypeEnum.SUCCESS, projectUpdate.title + " project updated successfully.")
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -59,9 +59,22 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
 
-  public onProjectDetailsAddU2P(u2pForm: User): void{
+  public onProjectDetailsAddU2P(u2pForm: User): void {
     const formData2 = this.projectService.addU2PFormData(this.project, u2pForm.username);
     this.projectService.addUserToProject(formData2).subscribe(
+      (response: Project) => {
+        this.getU2P(false);
+      },
+      (errorResponse: HttpErrorResponse) => {
+        this.sendNotification(NotificationTypeEnum.ERROR, u2pForm.username + " is already assigned.")
+      }
+    );
+  }
+
+  public deleteUserFromProject(selectedUser: User): void {
+    this.userTest = selectedUser;
+    const formData = this.projectService.addU2PFormData(this.project, selectedUser.username);
+    this.projectService.deleteUserFromProject(formData).subscribe(
       (response: Project) => {
         this.getU2P(false);
       }
@@ -89,9 +102,6 @@ export class ProjectDetailsComponent implements OnInit {
         (response: Project) => {
           this.users = Object.values(response)[7];
           this.refreshing = false;
-          if (showNotification) {
-            this.sendNotification(NotificationTypeEnum.SUCCESS, this.users.length + " user(s) loaded successfully.");
-          }
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -128,6 +138,13 @@ export class ProjectDetailsComponent implements OnInit {
     } else {
       this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
     }
+  }
+
+  public getUsersToSelect(usersAll: User[]): User[]{
+    let a1 = usersAll;
+    let a2 = this.users;
+    let result = a1.filter(o1 => !a2.some(o2 => o1.userId === o2.userId));
+    return result;
   }
 
   private clickButton(buttonId: string): void {
