@@ -73,9 +73,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteTaskGroup(String title, Long id) {
+    public void deleteTaskGroup(String title, String id) {
         Project project = projectRepository.findByTitle(title);
-        Optional<TaskGroup> optional = taskGroupRepository.findById(id);
+        Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(id));
         TaskGroup taskGroup = optional.get();
         project.deleteTaskGroup(taskGroup);
     }

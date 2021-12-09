@@ -20,7 +20,7 @@ public class Task implements Serializable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String title;
-    private String status;
+    private boolean done = false;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "task_group_id")

@@ -12,6 +12,9 @@ import {TaskGroup} from "../../../model/task-group";
 import {NgForm} from "@angular/forms";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CustomHttpResponse} from "../../../model/custom-http-response";
+
 
 @Component({
   selector: 'app-project-operational',
@@ -26,6 +29,9 @@ export class ProjectOperationalComponent implements OnInit {
   public user!: User;
   public project!: Project;
   public tasksGroups!: TaskGroup[];
+  public idTest!: string;
+  public todo!:  string[];
+  public done!: string[];
 
   constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
@@ -35,6 +41,8 @@ export class ProjectOperationalComponent implements OnInit {
     this.project = history.state;
     this.tasksGroups = this.project.taskGroups;
     this.getTaskGroups(true);
+    this.todo = ['Wstac'];
+    this.done = [];
   }
 
   public changeTitle(title: string): void {
@@ -48,6 +56,20 @@ export class ProjectOperationalComponent implements OnInit {
   private getUserRole(): string {
     return this.authenticationService.getUserFromLocalCache().role;
   }
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
@@ -96,5 +118,18 @@ export class ProjectOperationalComponent implements OnInit {
     } else {
       this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
     }
+  }
+
+  public onDelete(id: number) {
+    this.idTest = id.toString();
+    console.log(this.project.title);
+    console.log(this.idTest);
+    this.subs.add(
+      this.projectService.deleteTaskGroup(this.project.title, this.idTest).subscribe(
+        (response: TaskGroup) => {
+          this.getTaskGroups(false);
+        }
+      )
+    )
   }
 }

@@ -20,6 +20,7 @@ import { HomeComponent } from './component/home/home.component';
 import { ProjectsComponent } from './component/project/projects/projects.component';
 import { ProjectDetailsComponent } from './component/project/project-details/project-details.component';
 import { ProjectOperationalComponent } from './component/project/project-operational/project-operational.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ProjectOperationalComponent } from './component/project/project-operati
         AppRoutingModule,
         HttpClientModule,
         NotificationModule,
-        FormsModule
+        FormsModule,
+        DragDropModule
     ],
   providers: [NotificationService, AuthenticationGuard, AuthenticationService, UserService, {
     provide: HTTP_INTERCEPTORS,

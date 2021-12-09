@@ -1,8 +1,7 @@
-export class TaskGroup {
+export class Task {
   public id!: number;
   public title!: string;
-  public shortDescription!: string;
-  public tasks!: Task[];
+  public done!: boolean;
 
   constructor() {
     this.title = '';

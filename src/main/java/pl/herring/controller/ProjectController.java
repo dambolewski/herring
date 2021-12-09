@@ -43,8 +43,8 @@ public class ProjectController extends ExceptionHandling {
 
     @PostMapping("/project/deleteUserFromProject")
     public ResponseEntity<?> deleteUserFromProject(@RequestParam("title") String title, @RequestParam("username") String username) {
-        projectService.deleteUserFromProject(title,username);
-        return new ResponseEntity<>(OK,OK);
+        projectService.deleteUserFromProject(title, username);
+        return new ResponseEntity<>(OK, OK);
     }
 
     @DeleteMapping("/project/delete/{title}")
@@ -75,13 +75,17 @@ public class ProjectController extends ExceptionHandling {
 
     @PostMapping("/project/saveTaskGroup")
     public ResponseEntity<HttpResponse> saveTaskGroup(@RequestParam("title") String projectTitle, @RequestParam("tgTitle") String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
-        projectService.saveTaskGroup(projectTitle,taskGroupTitle);
-        return response(OK,TASKGROUP_ADDED_SUCCESSFULLY);
+        projectService.saveTaskGroup(projectTitle, taskGroupTitle);
+        return response(OK, TASKGROUP_ADDED_SUCCESSFULLY);
     }
 
-    @DeleteMapping("/project/deleteTaskGroup")
-    public ResponseEntity<HttpResponse> deleteTaskGroup(@RequestParam("title") String title, @RequestParam("id") Long id){
-        projectService.deleteTaskGroup(title,id);
-        return response(OK,TASKGROUP_DELETED_SUCCESSFULLY);
+    @DeleteMapping("/project/deleteTaskGroup/{title}/{id}")
+    public ResponseEntity<HttpResponse> deleteTaskGroup(@PathVariable("title") String title, @PathVariable("id") String id) {
+        projectService.deleteTaskGroup(title, id);
+        return response(OK, PROJECT_DELETED_SUCCESSFULLY);
     }
+/*    public ResponseEntity<HttpResponse> deleteTaskGroup(@RequestParam("title") String title, @RequestParam("id") String id) {
+        projectService.deleteTaskGroup(title, id);
+        return response(OK, TASKGROUP_DELETED_SUCCESSFULLY);
+    }*/
 }

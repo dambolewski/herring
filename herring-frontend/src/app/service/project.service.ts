@@ -4,7 +4,6 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Project} from "../model/project";
 import {CustomHttpResponse} from "../model/custom-http-response";
-import {User} from "../model/user";
 import {TaskGroup} from "../model/task-group";
 
 @Injectable({
@@ -57,6 +56,10 @@ export class ProjectService {
     return this.http.delete<CustomHttpResponse>(this.host + "/herring/project/delete/" + title);
   }
 
+  public deleteTaskGroup(title: string, id: string): Observable<TaskGroup> {
+    return this.http.delete<TaskGroup>(this.host + "/herring/project/deleteTaskGroup/" + title + "/" + id);
+  }
+
   public addUserToProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/addUserToProject", formData);
   }
@@ -76,6 +79,13 @@ export class ProjectService {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('tgTitle', taskGroup.title);
+    return formData;
+  }
+
+  public deleteTaskGroupFromData(title: string, id: string): FormData {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('id', id);
     return formData;
   }
 }
