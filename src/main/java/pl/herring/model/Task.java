@@ -25,4 +25,8 @@ public class Task implements Serializable {
     @ManyToOne
     @JoinColumn(name = "task_group_id")
     private TaskGroup taskGroup;
+
+    public Task(String title) {
+        this.title = title;
+    }
 }

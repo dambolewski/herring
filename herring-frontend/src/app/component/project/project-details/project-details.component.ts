@@ -29,7 +29,6 @@ export class ProjectDetailsComponent implements OnInit {
   public users!: User[];
   public usersAll!: User[] | null;
   public userTest!: User;
-  public usersToSelect!: User[];
   constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
 
@@ -141,10 +140,10 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   public getUsersToSelect(usersAll: User[]): User[]{
-    let a1 = usersAll;
-    let a2 = this.users;
-    let result = a1.filter(o1 => !a2.some(o2 => o1.userId === o2.userId));
-    return result;
+    let allUsersToAdd = usersAll;
+    let addedUsersToProject = this.users;
+    let usersToAdd = allUsersToAdd.filter(o1 => !addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
+    return usersToAdd;
   }
 
   private clickButton(buttonId: string): void {

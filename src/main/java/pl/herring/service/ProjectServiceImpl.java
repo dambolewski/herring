@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.herring.constant.ProjectConstant;
 import pl.herring.exception.domain.*;
 import pl.herring.model.Project;
+import pl.herring.model.Task;
 import pl.herring.model.TaskGroup;
 import pl.herring.model.User;
 import pl.herring.repository.ProjectRepository;
 import pl.herring.repository.TaskGroupRepository;
+import pl.herring.repository.TaskRepository;
 import pl.herring.repository.UserRepository;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -31,6 +33,7 @@ public class ProjectServiceImpl implements ProjectService {
     private UserRepository userRepository;
     private ProjectRepository projectRepository;
     private TaskGroupRepository taskGroupRepository;
+    public TaskRepository taskRepository;
 
     @Override
     public Project findProjectByTitle(String title) {
@@ -81,6 +84,23 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public void saveTask(String taskGroupID, String taskTitle){
+        Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(taskGroupID));
+        TaskGroup taskGroup = optional.get();
+        taskGroup.addTask(new Task(taskTitle));
+    }
+
+    @Override
+    public void deleteTask(String taskGroupID, String taskID){
+        Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(taskGroupID));
+        Optional<Task> taskOp = taskRepository.findById(Long.valueOf(taskID));
+        TaskGroup taskGroup = optional.get();
+        Task task = taskOp.get();
+        taskGroup.deleteTask(task);
+
+    }
+
+    @Override
     public Project getProject(String title) {
         return projectRepository.findByTitle(title);
     }
@@ -105,6 +125,15 @@ public class ProjectServiceImpl implements ProjectService {
         currentProject.setTrackFlag(newTrackFlag);
         projectRepository.save(currentProject);
         return currentProject;
+    }
+
+    @Override
+    public Task updateTask(String taskID, boolean isDone) {
+        Optional<Task> optional = taskRepository.findById(Long.valueOf(taskID));
+        Task task = optional.get();
+        task.setDone(isDone);
+        taskRepository.save(task);
+        return task;
     }
 
     private Project validateProject(String title, String username) throws NoTitleException, ProjectNotFoundException, UsernameExistException {

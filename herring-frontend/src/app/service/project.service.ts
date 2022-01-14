@@ -5,6 +5,8 @@ import {Observable} from "rxjs";
 import {Project} from "../model/project";
 import {CustomHttpResponse} from "../model/custom-http-response";
 import {TaskGroup} from "../model/task-group";
+import {Task} from "../model/task";
+import {Form} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +30,11 @@ export class ProjectService {
   }
 
   public addTaskGroup(formData: FormData): Observable<Project> {
-    return this.http.post<Project>(this.host+"/herring/project/saveTaskGroup", formData);
+    return this.http.post<Project>(this.host + "/herring/project/saveTaskGroup", formData);
+  }
+
+  public addTask(formData: FormData): Observable<Project> {
+    return this.http.post<Project>(this.host + "/herring/project/saveTask", formData);
   }
 
   public createProjectFormDate(project: Project, loggedUsername: string): FormData {
@@ -48,8 +54,19 @@ export class ProjectService {
     return formData;
   }
 
+  public createTaskFormDate(taskID: string, isDone: boolean): FormData{
+    const formData = new FormData();
+    formData.append('taskID', taskID);
+    formData.append('isDone', JSON.stringify(isDone));
+    return formData;
+  }
+
   public updateProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/update", formData);
+  }
+
+  public updateTask(formData: FormData): Observable<Task> {
+    return this.http.post<Task>(this.host + "/herring/project/updateTask", formData);
   }
 
   public deleteProject(title: string): Observable<CustomHttpResponse> {
@@ -58,6 +75,10 @@ export class ProjectService {
 
   public deleteTaskGroup(title: string, id: string): Observable<TaskGroup> {
     return this.http.delete<TaskGroup>(this.host + "/herring/project/deleteTaskGroup/" + title + "/" + id);
+  }
+
+  public deleteTask(tgID: string, taskID: string): Observable<Task> {
+    return this.http.delete<Task>(this.host + "/herring/project/deleteTask/" + tgID + "/" + taskID);
   }
 
   public addUserToProject(formData: FormData): Observable<Project> {
@@ -82,10 +103,10 @@ export class ProjectService {
     return formData;
   }
 
-  public deleteTaskGroupFromData(title: string, id: string): FormData {
+  public addTaskFormData(taskGroupID: string, task: Task): FormData {
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('id', id);
+    formData.append('taskGroupID', taskGroupID);
+    formData.append('tTitle', task.title);
     return formData;
   }
 }

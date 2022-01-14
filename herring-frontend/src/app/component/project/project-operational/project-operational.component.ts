@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {SubSink} from "subsink";
 import {BehaviorSubject} from "rxjs";
 import {User} from "../../../model/user";
@@ -9,11 +9,11 @@ import {UserService} from "../../../service/user.service";
 import {Role} from "../../../enum/role.enum";
 import {Project} from "../../../model/project";
 import {TaskGroup} from "../../../model/task-group";
+import {Task} from "../../../model/task";
 import {NgForm} from "@angular/forms";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {CustomHttpResponse} from "../../../model/custom-http-response";
 
 
 @Component({
@@ -29,9 +29,13 @@ export class ProjectOperationalComponent implements OnInit {
   public user!: User;
   public project!: Project;
   public tasksGroups!: TaskGroup[];
+  public tasks!: Task[];
   public idTest!: string;
-  public todo!:  string[];
-  public done!: string[];
+  private taskId!: string;
+  private taskGroupID!: string;
+  public todoTasks!: Task[];
+  public doneTasks!: Task[];
+  public taskToCheck!: Task[];
 
   constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
@@ -41,8 +45,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.project = history.state;
     this.tasksGroups = this.project.taskGroups;
     this.getTaskGroups(true);
-    this.todo = ['Wstac'];
-    this.done = [];
+    this.getTasks(true);
   }
 
   public changeTitle(title: string): void {
@@ -57,10 +60,11 @@ export class ProjectOperationalComponent implements OnInit {
     return this.authenticationService.getUserFromLocalCache().role;
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<Task[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      this.onTaskUpdate(event.previousContainer.data[event.previousIndex].id, event.previousContainer.data[event.previousIndex].done);
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -89,9 +93,23 @@ export class ProjectOperationalComponent implements OnInit {
     this.getTaskGroups(true);
   }
 
-  public saveNewProject() {
+  public onAddNewTask(taskGroup: number, newTaskForm: NgForm) {
+    const formData = this.projectService.addTaskFormData(String(taskGroup), newTaskForm.value);
+    this.subs.add(
+      this.projectService.addTask(formData).subscribe(
+        (response: Project) => {
+          this.clickButton('new-task-close');
+          this.getTaskGroups(false);
+        }
+      )
+    )
+    this.getTaskGroups(false);
+  }
+
+  public saveNewTaskGroup() {
     this.clickButton('new-task-group-save');
   }
+
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)!.click();
   }
@@ -112,6 +130,39 @@ export class ProjectOperationalComponent implements OnInit {
     );
   }
 
+  public getTasks(showNotification: boolean) {
+    this.refreshing = true;
+    this.subs.add(
+      this.projectService.getProject(this.project.title).subscribe(
+        (response: Project) => {
+          this.tasksGroups = Object.values(response)[8];
+          this.tasks = this.tasksGroups[0]?.tasks;
+          this.refreshing = false;
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
+        }
+      )
+    );
+  }
+
+  public onTaskUpdate(taskID: number, isDone: boolean): void {
+    const formData = this.projectService.createTaskFormDate(String(taskID!), !isDone!);
+    this.subs.add(
+      this.projectService.updateTask(formData).subscribe(
+        (response: Task) => {
+          this.getTasks(false);
+          console.log(taskID, response.title, isDone);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    );
+  }
+
+
   private sendNotification(notificationType: NotificationTypeEnum, message: string): void {
     if (message) {
       this.notificationService.notify(notificationType, message);
@@ -122,8 +173,6 @@ export class ProjectOperationalComponent implements OnInit {
 
   public onDelete(id: number) {
     this.idTest = id.toString();
-    console.log(this.project.title);
-    console.log(this.idTest);
     this.subs.add(
       this.projectService.deleteTaskGroup(this.project.title, this.idTest).subscribe(
         (response: TaskGroup) => {
@@ -131,5 +180,31 @@ export class ProjectOperationalComponent implements OnInit {
         }
       )
     )
+  }
+
+  public onDeleteTask(taskGroupID: number, id: number) {
+    this.taskGroupID = taskGroupID.toString();
+    this.taskId = id.toString();
+    this.subs.add(
+      this.projectService.deleteTask(this.taskGroupID, this.taskId).subscribe(
+        (response: Task) => {
+          this.getTasks(false);
+        }
+      )
+    )
+  }
+
+  filterTasksToDo(tasks: Task[]) {
+    this.todoTasks = tasks?.filter(t => !t.done);
+    return this.todoTasks;
+  }
+
+  filterTasksDone(tasks: Task[]) {
+    this.todoTasks = tasks?.filter(t => t.done);
+    return this.todoTasks;
+  }
+
+  showAny(item: Task) {
+    console.log(item.title);
   }
 }

@@ -63,7 +63,7 @@
       </div>
 
 
-      <!-- -->
+      <!-- Task Groups -->
 
       <div class="tab-pane fade show active" id="profile">
         <div class="container">
@@ -76,14 +76,34 @@
                       <div class="card-body">
                         <div class="e-profile">
                           <div class="row">
-                            <div class="col col-sm-left">
-                              <h2>{{taskGroup.title}}</h2>
-                            </div>
-                            <div class="text-center text-sm-right">
-                              <button (click)="onDelete(taskGroup.id)" class="btn btn-block btn-danger">
-                                <span>Delete</span>
-                                <i class="fas fa-sing-in-alt ml-1"></i>
-                              </button>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-sm">
+                                  <h2>{{taskGroup.title}}</h2>
+                                </div>
+                                <div class="col-sm">
+                                </div>
+                                <div class="col-sm">
+                                </div>
+                                <div class="col-sm">
+                                  <div class="row">
+                                    <div class="col-sm text-right">
+                                      <button type="button" class="btn btn-primary" data-toggle="modal"
+                                              data-backdrop="false"
+                                              [attr.data-target]="'#' + taskGroup.title">
+                                        <i class="fa fa-plus"></i>
+                                        <span> Task </span>
+                                      </button>
+                                    </div>
+                                    <div class="col-sm">
+                                      <button (click)="onDelete(taskGroup.id)" class="btn btn-block btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                        <span> Delete</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                           <div class="tab-content pt-3">
@@ -91,13 +111,21 @@
                               <div cdkDropListGroup>
                                 <div class="example-container">
                                   <h4>To do</h4>
-
                                   <div
                                     cdkDropList
-                                    [cdkDropListData]="todo!"
+                                    [cdkDropListData]=filterTasksToDo(taskGroup.tasks)!
                                     class="example-list"
                                     (cdkDropListDropped)="drop($event)">
-                                    <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item}}</div>
+                                    <div class="example-box" *ngFor="let item of filterTasksToDo(taskGroup.tasks)!" cdkDrag>
+                                      {{item.title}}
+                                      <div class="text-center text-sm-right">
+                                        <button (click)="onDeleteTask(taskGroup.id, item.id)"
+                                                class="btn btn-block btn-danger">
+                                          <span>Delete</span>
+                                          <i class="fas fa-sing-in-alt ml-1"></i>
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
 
@@ -106,10 +134,19 @@
 
                                   <div
                                     cdkDropList
-                                    [cdkDropListData]="done!"
+                                    [cdkDropListData]=filterTasksDone(taskGroup.tasks)!
                                     class="example-list"
                                     (cdkDropListDropped)="drop($event)">
-                                    <div class="example-box" *ngFor="let item of done" cdkDrag>{{item}}</div>
+                                    <div class="example-box" *ngFor="let item of filterTasksDone(taskGroup.tasks)!" cdkDrag>
+                                      {{item.title}}
+                                      <div class="text-center text-sm-right">
+                                        <button (click)="onDeleteTask(taskGroup.id, item.id)"
+                                                class="btn btn-block btn-danger">
+                                          <span>Delete</span>
+                                          <i class="fas fa-sing-in-alt ml-1"></i>
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -118,6 +155,40 @@
                         </div>
                       </div>
                     </div>
+
+                    <!-- Add Task Modal -->
+
+
+                    <div class="modal fade" [id]=taskGroup.title tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form #newTaskForm="ngForm" (ngSubmit)="onAddNewTask(taskGroup.id, newTaskForm)">
+                              <div class="form-group">
+                                <label>Title</label>
+
+                                <input type="text" name="title" required ngModel class="form-control">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-task-close">
+                                  Close
+                                </button>
+                                <button type="submit" [disabled]="newTaskForm.invalid" class="btn btn-primary">Save changes</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
                   </div>
                 </div>
               </div>
@@ -151,7 +222,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-project-close">Close</button>
-            <button type="button" (click)="saveNewProject()" [disabled]="newTaskGroupForm.invalid"
+            <button type="button" (click)="saveNewTaskGroup()" [disabled]="newTaskGroupForm.invalid"
                     class="btn btn-primary">
               Save changes
             </button>

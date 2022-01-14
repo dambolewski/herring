@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.*;
 import pl.herring.exception.domain.*;
 import pl.herring.model.HttpResponse;
 import pl.herring.model.Project;
+import pl.herring.model.Task;
 import pl.herring.service.ProjectService;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
+import static pl.herring.constant.TaskConstant.TASK_ADDED_SUCCESSFULLY;
+import static pl.herring.constant.TaskConstant.TASK_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskGroupConstant.TASKGROUP_ADDED_SUCCESSFULLY;
 import static pl.herring.constant.TaskGroupConstant.TASKGROUP_DELETED_SUCCESSFULLY;
 
@@ -73,6 +76,13 @@ public class ProjectController extends ExceptionHandling {
         return new ResponseEntity<>(updatedProject, OK);
     }
 
+    @PostMapping("/project/updateTask")
+    public ResponseEntity<Task> updateTask(@RequestParam("taskID") String taskID,
+                                           @RequestParam("isDone") String isDone){
+        Task updatedTask = projectService.updateTask(taskID, Boolean.parseBoolean(isDone));
+        return new ResponseEntity<>(updatedTask, OK);
+    }
+
     @PostMapping("/project/saveTaskGroup")
     public ResponseEntity<HttpResponse> saveTaskGroup(@RequestParam("title") String projectTitle, @RequestParam("tgTitle") String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
         projectService.saveTaskGroup(projectTitle, taskGroupTitle);
@@ -84,8 +94,16 @@ public class ProjectController extends ExceptionHandling {
         projectService.deleteTaskGroup(title, id);
         return response(OK, PROJECT_DELETED_SUCCESSFULLY);
     }
-/*    public ResponseEntity<HttpResponse> deleteTaskGroup(@RequestParam("title") String title, @RequestParam("id") String id) {
-        projectService.deleteTaskGroup(title, id);
-        return response(OK, TASKGROUP_DELETED_SUCCESSFULLY);
-    }*/
+
+    @PostMapping("/project/saveTask")
+    public ResponseEntity<HttpResponse> saveTask(@RequestParam("taskGroupID") String taskGroupID, @RequestParam("tTitle") String tTitle) {
+        projectService.saveTask(taskGroupID,tTitle);
+        return response(OK, TASK_ADDED_SUCCESSFULLY);
+    }
+
+    @DeleteMapping("/project/deleteTask/{taskGroupID}/{id}")
+    public ResponseEntity<HttpResponse> deleteTask(@PathVariable("taskGroupID") String taskGroupID, @PathVariable("id") String id) {
+        projectService.deleteTask(taskGroupID, id);
+        return response(OK, TASK_DELETED_SUCCESSFULLY);
+    }
 }
