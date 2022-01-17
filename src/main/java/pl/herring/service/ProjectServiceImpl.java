@@ -3,10 +3,8 @@ package pl.herring.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.herring.constant.ProjectConstant;
 import pl.herring.exception.domain.*;
 import pl.herring.model.Project;
 import pl.herring.model.Task;
@@ -19,10 +17,14 @@ import pl.herring.repository.UserRepository;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static pl.herring.constant.ProjectConstant.*;
+import static pl.herring.constant.TaskConstant.NO_TASK_TITLE;
+import static pl.herring.constant.TaskGroupConstant.NO_TASKGROUP_TITLE;
+import static pl.herring.constant.TaskGroupConstant.NO_TASK_NOR_TG;
 import static pl.herring.constant.UserConstant.NO_USER_FOUND_BY_USERNAME;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -42,8 +44,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project saveProject(String title, String creator) throws NoTitleException, ProjectAlreadyExist {
-        validateNewProject(title);
-        Project project = new Project(title);
+        String temp = title.replaceFirst("^\\s*", "");
+        validateNewProject(temp);
+        Project project = new Project(temp);
         project.setUuid(generateUuid());
         project.setDescription("Simple Description");
         project.setCreationDate(new Date());
@@ -69,10 +72,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void saveTaskGroup(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
-        validateTaskGroupToProject(projectTitle, taskGroupTitle);
+    public void saveTaskGroup(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException, NoTaskGroupTitleException {
+        String temp = taskGroupTitle.replaceFirst("^\\s*", "");
+        validateTaskGroupToProject(projectTitle, temp);
         Project project = projectRepository.findByTitle(projectTitle);
-        project.addTaskGroup(new TaskGroup(taskGroupTitle));
+        project.addTaskGroup(new TaskGroup(temp));
     }
 
     @Override
@@ -84,7 +88,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void saveTask(String taskGroupID, String taskTitle){
+    public void saveTask(String taskGroupID, String taskTitle) throws NoTaskTitleNorTaskGroupTitle, NoTaskTitleException {
+        validateTaskToTaskGroup(taskTitle, taskGroupID);
         Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(taskGroupID));
         TaskGroup taskGroup = optional.get();
         taskGroup.addTask(new Task(taskTitle));
@@ -160,6 +165,19 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+    private void validateTaskToTaskGroup(String taskTitle, String taskGroupID) throws NoTaskTitleNorTaskGroupTitle, NoTaskTitleException {
+        Optional<TaskGroup> operational = taskGroupRepository.findById(Long.valueOf(taskGroupID));
+        TaskGroup taskGroup = operational.get();
+        if(isBlank(taskGroupID)){
+            throw new NoTaskTitleNorTaskGroupTitle(NO_TASK_NOR_TG);
+        } else if(isBlank(taskTitle)){
+            throw new NoTaskTitleException(NO_TASK_TITLE);
+        }
+        if (!taskGroupRepository.findAll().contains(taskGroup)){
+            throw new NoSuchElementException();
+        }
+    }
+
     private Project validateUserToProject(String title, String username) throws ProjectNotFoundException, UserNotFoundException, NoTitleNorUsernameException {
         Project project = projectRepository.findByTitle(title);
         User user = userRepository.findByUsername(username);
@@ -177,10 +195,12 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    private Project validateTaskGroupToProject(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
+    private Project validateTaskGroupToProject(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException, NoTaskGroupTitleException {
         Project project = findProjectByTitle(projectTitle);
         if (isBlank(projectTitle) || isBlank(taskGroupTitle)) {
             throw new NoProjectNorTaskGroupException(NOT_PROJECT_NOR_TASKGROUP);
+        } else if (isBlank(taskGroupTitle)) {
+                throw new NoTaskGroupTitleException(NO_TASKGROUP_TITLE);
         } else if (project == null) {
             throw new ProjectNotFoundException(PROJECT_NOT_FOUND_EXCEPTION + projectTitle);
         } else {

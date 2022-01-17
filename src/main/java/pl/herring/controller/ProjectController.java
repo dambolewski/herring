@@ -17,7 +17,6 @@ import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_ADDED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskGroupConstant.TASKGROUP_ADDED_SUCCESSFULLY;
-import static pl.herring.constant.TaskGroupConstant.TASKGROUP_DELETED_SUCCESSFULLY;
 
 @AllArgsConstructor
 @RestController
@@ -84,7 +83,7 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/saveTaskGroup")
-    public ResponseEntity<HttpResponse> saveTaskGroup(@RequestParam("title") String projectTitle, @RequestParam("tgTitle") String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException {
+    public ResponseEntity<HttpResponse> saveTaskGroup(@RequestParam("title") String projectTitle, @RequestParam("tgTitle") String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException, NoTaskGroupTitleException {
         projectService.saveTaskGroup(projectTitle, taskGroupTitle);
         return response(OK, TASKGROUP_ADDED_SUCCESSFULLY);
     }
@@ -96,7 +95,7 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/saveTask")
-    public ResponseEntity<HttpResponse> saveTask(@RequestParam("taskGroupID") String taskGroupID, @RequestParam("tTitle") String tTitle) {
+    public ResponseEntity<HttpResponse> saveTask(@RequestParam("taskGroupID") String taskGroupID, @RequestParam("tTitle") String tTitle) throws NoTaskTitleNorTaskGroupTitle, NoTaskTitleException {
         projectService.saveTask(taskGroupID,tTitle);
         return response(OK, TASK_ADDED_SUCCESSFULLY);
     }

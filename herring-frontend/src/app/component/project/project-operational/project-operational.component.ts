@@ -14,6 +14,7 @@ import {NgForm} from "@angular/forms";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -35,17 +36,14 @@ export class ProjectOperationalComponent implements OnInit {
   private taskGroupID!: string;
   public todoTasks!: Task[];
   public doneTasks!: Task[];
-  public taskToCheck!: Task[];
 
-  constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
+  constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
 
   ngOnInit(): void {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.project = history.state;
     this.tasksGroups = this.project.taskGroups;
-    this.getTaskGroups(true);
-    this.getTasks(true);
   }
 
   public changeTitle(title: string): void {
@@ -87,6 +85,10 @@ export class ProjectOperationalComponent implements OnInit {
           this.clickButton('new-project-close');
           newTaskGroupFrom.reset();
           this.getTaskGroups(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
         }
       )
     )
@@ -100,6 +102,10 @@ export class ProjectOperationalComponent implements OnInit {
         (response: Project) => {
           this.clickButton('new-task-close');
           this.getTaskGroups(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
         }
       )
     )
@@ -119,7 +125,11 @@ export class ProjectOperationalComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          this.tasksGroups = Object.values(response)[8];
+          if(response === null || response === undefined){
+            this.router.navigateByUrl("/project-list")
+          } else {
+            this.tasksGroups = Object?.values(response)[8];
+          }
           this.refreshing = false;
         },
         (errorResponse: HttpErrorResponse) => {
@@ -135,7 +145,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          this.tasksGroups = Object.values(response)[8];
+          this.tasksGroups = Object?.values(response)[8];
           this.tasks = this.tasksGroups[0]?.tasks;
           this.refreshing = false;
         },
@@ -153,7 +163,6 @@ export class ProjectOperationalComponent implements OnInit {
       this.projectService.updateTask(formData).subscribe(
         (response: Task) => {
           this.getTasks(false);
-          console.log(taskID, response.title, isDone);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);

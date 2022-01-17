@@ -17,6 +17,7 @@ import pl.herring.model.HttpResponse;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
@@ -140,6 +141,26 @@ public class ExceptionHandling {
 
     @ExceptionHandler(NoProjectNorTaskGroupException.class)
     public ResponseEntity<HttpResponse> noProjectNorTaskGroupException(NoProjectNorTaskGroupException exception){
+        return createHttpResponse(NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoTaskTitleException.class)
+    public ResponseEntity<HttpResponse> noTaskTitleException(NoTaskTitleException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoTaskGroupTitleException.class)
+    public ResponseEntity<HttpResponse> noTaskGroupTitleException(NoTaskGroupTitleException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoTaskTitleNorTaskGroupTitle.class)
+    public ResponseEntity<HttpResponse> noTaskTitleNorTaskGroupTitle(NoTaskTitleNorTaskGroupTitle exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<HttpResponse> noSuchElementException(NoSuchElementException exception){
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
 

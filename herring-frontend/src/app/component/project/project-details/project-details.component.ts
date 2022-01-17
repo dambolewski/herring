@@ -11,6 +11,8 @@ import {User} from "../../../model/user";
 import {CustomHttpResponse} from "../../../model/custom-http-response";
 import {HttpErrorResponse} from "@angular/common/http";
 import {UserService} from "../../../service/user.service";
+import {Router} from "@angular/router";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-project-details',
@@ -29,7 +31,7 @@ export class ProjectDetailsComponent implements OnInit {
   public users!: User[];
   public usersAll!: User[] | null;
   public userTest!: User;
-  constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
+  constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
 
   ngOnInit(): void {
@@ -70,12 +72,13 @@ export class ProjectDetailsComponent implements OnInit {
     );
   }
 
-  public deleteUserFromProject(selectedUser: User): void {
+  public deleteUserFromProject(selectedUser: User, ngForm: NgForm): void {
     this.userTest = selectedUser;
     const formData = this.projectService.addU2PFormData(this.project, selectedUser.username);
     this.projectService.deleteUserFromProject(formData).subscribe(
       (response: Project) => {
         this.getU2P(false);
+        ngForm.reset();
       }
     );
   }
@@ -99,7 +102,11 @@ export class ProjectDetailsComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          this.users = Object.values(response)[7];
+          if(response === null || response === undefined){
+            this.router.navigateByUrl("/project-list")
+          } else {
+            this.users = Object.values(response)[7];
+          }
           this.refreshing = false;
         },
         (errorResponse: HttpErrorResponse) => {

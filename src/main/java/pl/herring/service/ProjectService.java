@@ -15,9 +15,9 @@ public interface ProjectService {
     void deleteProject(String title);
     Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException;
     void deleteUserFromProject(String title, String username);
-    void saveTaskGroup(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException;
+    void saveTaskGroup(String projectTitle, String taskGroupTitle) throws NoProjectNorTaskGroupException, ProjectNotFoundException, NoTaskGroupTitleException;
     void deleteTaskGroup(String title, String id);
-    void saveTask(String taskGroupTitle, String taskTitle);
+    void saveTask(String taskGroupTitle, String taskTitle) throws NoTaskTitleNorTaskGroupTitle, NoTaskTitleException;
     void deleteTask(String taskGroupID, String taskID);
     Task updateTask(String taskID, boolean isDone);
 }
