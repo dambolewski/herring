@@ -63,7 +63,7 @@
                                 <div class="col">
                                   <div class="form-group">
                                     <input type="text" name="title" required [(ngModel)]="project.title"
-                                           class="form-control" [disabled]="!isAdminOrManager">
+                                           class="form-control" [disabled]="!isAdminOrManager || project.creator !== user.username">
                                   </div>
                                 </div>
                               </div>
@@ -84,7 +84,8 @@
                                     <div class="form-group">
                                       <label for="description">Description</label>
                                       <textarea class="form-control" id="description" rows="2" name="description"
-                                                required [(ngModel)]="project.description"></textarea>
+                                                required [(ngModel)]="project.description"
+                                                [disabled]="!checkIfUserChangeDescription(usersAll)"></textarea>
                                     </div>
                                   </div>
                                 </div>
@@ -115,8 +116,7 @@
                                   class="fas fa-arrow-circle-left"></i></button>
                               </div>
                               <div class="col d-flex justify-content-end">
-                                <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager"
-                                        [disabled]="projectDetailsForm.invalid">
+                                <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager || project.creator !== user.username || projectDetailsForm.invalid">
                                   <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                                   <span *ngIf="refreshing">Loading...</span>
                                   <span *ngIf="!refreshing">Save Changes</span>
@@ -131,20 +131,19 @@
                 </div>
               </div>
               <div class="col-12 col-md-3 mb-3">
-                <div class="card mb-3">
+                <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">
                   <div class="card-body">
                     <button (click)="onDelete(project.title)" class="btn btn-block btn-danger"
-                            routerLink="/project-list">
+                            [disabled]="!isAdminOrManager || !checkIfUserChangeDescription(usersAll)" routerLink="/project-list">
                       <span>Delete</span>
                       <i class="fas fa-sing-in-alt ml-1"></i>
                     </button>
                   </div>
                 </div>
-                <div class="card mb-3">
+                <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">
                   <div class="card">
                     <div class="card-body">
                       <h6 class="card-title font-weight-bold">Add User:</h6>
-
                       <form #addU2PForm="ngForm" (ngSubmit)="onProjectDetailsAddU2P(addU2PForm.value)"
                             class="form" novalidate>
                         <div class="row">
@@ -165,7 +164,7 @@
 
                         <div class="row">
                           <div class="col d-flex justify-content-end">
-                            <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager">
+                            <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager || project.creator !== user.username">
                               <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                               <span *ngIf="refreshing">Loading...</span>
                               <span *ngIf="!refreshing">Add User</span>

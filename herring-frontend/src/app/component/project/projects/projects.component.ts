@@ -108,15 +108,6 @@ export class ProjectsComponent implements OnInit {
     return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.SUPER_ADMIN;
   }
 
-
-  public get isManagerOrHr(): boolean {
-    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER || this.getUserRole() === Role.HR;
-  }
-
-  public get isAdminOrManager(): boolean {
-    return this.isAdmin || this.isManagerOrHr;
-  }
-
   private getUserRole(): string {
     return this.authenticationService.getUserFromLocalCache().role;
   }
@@ -140,5 +131,23 @@ export class ProjectsComponent implements OnInit {
   onSelectToOperations(appProject: Project) {
     this.projectTest = appProject;
     this.router.navigateByUrl('/project-operations', {state: this.projectTest});
+  }
+
+  changeTrackFlag(appProject: Project) {
+    console.log(appProject.trackFlag);
+    this.refreshing = true;
+    const formData = this.projectService.createProjectTrackFlagFormData(appProject, appProject.creator);
+    this.subs.add(
+      this.projectService.updateProject(formData).subscribe(
+        (response: Project) => {
+          this.refreshing = false;
+          this.getProjects(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
+        }
+      )
+    );
   }
 }

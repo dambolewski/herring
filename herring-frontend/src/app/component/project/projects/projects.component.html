@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" xmlns:color="http://www.w3.org/1999/xhtml">
   <div class="row mb-2 mt-2 text-center">
     <div class="col-md-4">
     </div>
@@ -70,9 +70,9 @@
         <td (click)="onSelectToOperations(appProject)">{{appProject.uuid}}</td>
         <td (click)="onSelectToOperations(appProject)">{{appProject.title}}</td>
         <td>{{appProject.creator}}</td>
-        <td>
-          <span [hidden]="!appProject?.trackFlag" class="badge badge-success">Active</span>
-          <span [hidden]="appProject?.trackFlag" class="badge badge-danger">Inactive</span>
+        <td (dblclick)="changeTrackFlag(appProject)">
+          <span [hidden]="!appProject?.trackFlag" class="badge badge-success"><i class="fa fa-flag"></i></span>
+          <span [hidden]="appProject?.trackFlag" class="badge badge-danger"><i class="fa fa-flag"></i></span>
         </td>
         <td class="">
           <div class="btn-group">

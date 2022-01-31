@@ -15,6 +15,8 @@ import pl.herring.repository.TaskGroupRepository;
 import pl.herring.repository.TaskRepository;
 import pl.herring.repository.UserRepository;
 
+import javax.mail.MessagingException;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static pl.herring.constant.ProjectConstant.*;
 import static pl.herring.constant.TaskConstant.NO_TASK_TITLE;
@@ -22,10 +24,7 @@ import static pl.herring.constant.TaskGroupConstant.NO_TASKGROUP_TITLE;
 import static pl.herring.constant.TaskGroupConstant.NO_TASK_NOR_TG;
 import static pl.herring.constant.UserConstant.NO_USER_FOUND_BY_USERNAME;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,6 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
     private TaskGroupRepository taskGroupRepository;
     public TaskRepository taskRepository;
+    private EmailService emailService;
 
     @Override
     public Project findProjectByTitle(String title) {
@@ -56,19 +56,23 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void addUserToProject(String title, String username) throws ProjectNotFoundException, UserNotFoundException, NoTitleNorUsernameException {
+    public void addUserToProject(String title, String username) throws ProjectNotFoundException, UserNotFoundException, NoTitleNorUsernameException, MessagingException {
         User user = userRepository.findByUsername(username);
         Project project = projectRepository.findByTitle(title);
         validateUserToProject(title, username);
         project.getUsers().add(user);
+        if(!Objects.equals(user.getUsername(), project.getCreator())){
+            emailService.sendInformationAddedToProject(username, title);
+        }
     }
 
 
     @Override
-    public void deleteUserFromProject(String title, String username) {
+    public void deleteUserFromProject(String title, String username) throws MessagingException {
         Project project = projectRepository.findByTitle(title);
         User user = userRepository.findByUsername(username);
         project.getUsers().remove(user);
+        emailService.sendInformationDeletedFromProject(username, title);
     }
 
     @Override

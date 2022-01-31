@@ -46,9 +46,19 @@ export class ProjectService {
 
   public createProjectDetailsFormDate(currentTitle: string, project: Project, creator: string): FormData {
     const formData = new FormData();
-    formData.append('currentTitle', currentTitle)
+    formData.append('currentTitle', currentTitle);
     formData.append('title', project.title);
     formData.append('trackFlag', JSON.stringify(project.trackFlag));
+    formData.append('description', project.description);
+    formData.append('creator', creator);
+    return formData;
+  }
+
+  public createProjectTrackFlagFormData(project: Project, creator: string): FormData {
+    const formData = new FormData();
+    formData.append('currentTitle', project.title);
+    formData.append('title', project.title);
+    formData.append('trackFlag', JSON.stringify(!project.trackFlag));
     formData.append('description', project.description);
     formData.append('creator', creator);
     return formData;

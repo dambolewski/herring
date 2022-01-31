@@ -125,7 +125,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          if(response === null || response === undefined){
+          if (response === null || response === undefined) {
             this.router.navigateByUrl("/project-list")
           } else {
             this.tasksGroups = Object?.values(response)[8];
@@ -213,7 +213,15 @@ export class ProjectOperationalComponent implements OnInit {
     return this.todoTasks;
   }
 
-  showAny(item: Task) {
-    console.log(item.title);
+  getPercentages(allTasks: TaskGroup): number {
+    let all = allTasks?.tasks?.length;
+    let done = this.filterTasksDone(allTasks?.tasks)?.length;
+    let result = ((done / all) * 100);
+    if (isNaN(result)) {
+      result = 0;
+      return result;
+    } else {
+      return Math.round(result);
+    }
   }
 }

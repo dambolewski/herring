@@ -10,6 +10,7 @@ import pl.herring.model.Project;
 import pl.herring.model.Task;
 import pl.herring.service.ProjectService;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -38,13 +39,13 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/addUserToProject")
-    public ResponseEntity<?> addUserToProject(@RequestParam("title") String title, @RequestParam("username") String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException {
+    public ResponseEntity<?> addUserToProject(@RequestParam("title") String title, @RequestParam("username") String username) throws ProjectNotFoundException, ProjectAlreadyContainsUserException, UserNotFoundException, NoTitleNorUsernameException, MessagingException {
         projectService.addUserToProject(title, username);
         return new ResponseEntity<>(OK, OK);
     }
 
     @PostMapping("/project/deleteUserFromProject")
-    public ResponseEntity<?> deleteUserFromProject(@RequestParam("title") String title, @RequestParam("username") String username) {
+    public ResponseEntity<?> deleteUserFromProject(@RequestParam("title") String title, @RequestParam("username") String username) throws MessagingException {
         projectService.deleteUserFromProject(title, username);
         return new ResponseEntity<>(OK, OK);
     }

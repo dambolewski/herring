@@ -64,7 +64,6 @@
 
 
       <!-- Task Groups -->
-
       <div class="tab-pane fade show active" id="profile">
         <div class="container">
           <div class="row flex-lg-nowrap">
@@ -74,6 +73,9 @@
                   <div *ngFor="let taskGroup of tasksGroups">
                     <div class="card">
                       <div class="card-body">
+                        <div class="progress">
+                          <div class="progress-bar bg-success" role="progressbar" style="width: {{getPercentages(taskGroup)}}%"   aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                         <div class="e-profile">
                           <div class="row">
                             <div class="container">
@@ -90,7 +92,7 @@
                                     <div class="col-sm text-right">
                                       <button type="button" class="btn btn-primary" data-toggle="modal"
                                               data-backdrop="false"
-                                              [attr.data-target]="'#' + taskGroup.title">
+                                              [attr.data-target]= "'#id' + taskGroup.id">
                                         <i class="fa fa-plus"></i>
                                         <span> Task </span>
                                       </button>
@@ -106,6 +108,8 @@
                               </div>
                             </div>
                           </div>
+
+                          <!-- drag&drop -->
                           <div class="tab-content pt-3">
                             <div class="tab-pane active">
                               <div cdkDropListGroup>
@@ -152,14 +156,14 @@
                               </div>
                             </div>
                           </div>
+
+
                         </div>
                       </div>
                     </div>
 
                     <!-- Add Task Modal -->
-
-
-                    <div class="modal fade" [id]=taskGroup.title tabindex="-1" role="dialog"
+                    <div class="modal fade" id = "id{{taskGroup.id}}" tabindex="-1" role="dialog"
                          aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -187,8 +191,6 @@
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
               </div>

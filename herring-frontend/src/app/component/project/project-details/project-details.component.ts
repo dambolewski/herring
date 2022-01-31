@@ -149,12 +149,20 @@ export class ProjectDetailsComponent implements OnInit {
   public getUsersToSelect(usersAll: User[]): User[]{
     let allUsersToAdd = usersAll;
     let addedUsersToProject = this.users;
-    let usersToAdd = allUsersToAdd.filter(o1 => !addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
-    return usersToAdd;
+    return allUsersToAdd.filter(o1 => !addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
   }
 
-  private clickButton(buttonId: string): void {
-    document.getElementById(buttonId)!.click();
+  public checkIfUserChangeDescription(users: User[] | null) : boolean{
+    let creatorUsername = this.user.username;
+    let addedUsersToProject = this.users;
+    let result = users!.filter(o1 => addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
+    let checkBoolean = false;
+    result.forEach(function (value){
+      if (value.username === creatorUsername) {
+        checkBoolean = true;
+      }
+    });
+    return checkBoolean;
   }
 
   ngOnDestroy(): void {
