@@ -22,6 +22,7 @@ import static pl.herring.constant.TaskGroupConstant.NO_TASKGROUP_TITLE;
 import static pl.herring.constant.TaskGroupConstant.NO_TASK_NOR_TG;
 import static pl.herring.constant.UserConstant.NO_USER_FOUND_BY_USERNAME;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -157,6 +158,19 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findByTitle(title);
         saveAttachment(project, file);
         project.addAttachments(new Attachment(file.getOriginalFilename(), setAttachmentURL(project, file.getOriginalFilename())));
+    }
+
+    @Override
+    public void deleteAttachment(String title, String id) {
+        Project project = findProjectByTitle(title);
+        Optional<Attachment> optional = attachmentRepository.findById(Long.valueOf(id));
+        Attachment attachment = optional.get();
+        Path fileFolder = Paths.get(PROJECT_FOLDER + project.getTitle() + '/' + attachment.getName()).toAbsolutePath().normalize();
+        File file = new File(String.valueOf(fileFolder));
+        if(file.exists()){
+            file.delete();
+        }
+        project.deleteAttachments(attachment);
     }
 
 

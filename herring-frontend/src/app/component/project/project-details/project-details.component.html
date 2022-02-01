@@ -63,7 +63,8 @@
                                 <div class="col">
                                   <div class="form-group">
                                     <input type="text" name="title" required [(ngModel)]="project.title"
-                                           class="form-control" [disabled]="!isAdminOrManager || project.creator !== user.username">
+                                           class="form-control"
+                                           [disabled]="!isAdminOrManager || project.creator !== user.username">
                                   </div>
                                 </div>
                               </div>
@@ -116,7 +117,8 @@
                                   class="fas fa-arrow-circle-left"></i></button>
                               </div>
                               <div class="col d-flex justify-content-end">
-                                <button (click)="updateProfileImage(project)" class="btn btn-primary" type="button" style="margin-right: 10px">
+                                <button (click)="updateProfileImage(project)" class="btn btn-primary" type="button"
+                                        style="margin-right: 10px">
                                   <i class="fa fa-fw fa-camera"></i>
                                   <span>Add Attachment</span>
                                 </button>
@@ -124,9 +126,11 @@
                                 <form enctype="multipart/form-data" style="display: none;">
                                   <input type="file"
                                          (change)="onProfileImageChange($event); onUpdateProfileImage(project)"
-                                         name="profileImage" id="profile-image-input" placeholder="file" accept="image/*">
+                                         name="profileImage" id="profile-image-input" placeholder="file"
+                                         accept="image/*">
                                 </form>
-                                <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager || project.creator !== user.username || projectDetailsForm.invalid">
+                                <button class="btn btn-primary" type="submit"
+                                        [disabled]="!isAdminOrManager || project.creator !== user.username || projectDetailsForm.invalid">
                                   <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                                   <span *ngIf="refreshing">Loading...</span>
                                   <span *ngIf="!refreshing">Save Changes</span>
@@ -143,11 +147,20 @@
                 <div class="card" style="margin-top: 10px">
                   <div class="card-body">
                     <span>Attachments:</span>
-                    <div class="d-flex align-items-center rounded">
-                      <div *ngFor="let attachment of attachments" style="margin: 5px">
-                        <img class="rounded" height="135" width="135" src="{{attachment?.url}}" alt="">
-                        <div class="text-under">
-                          {{attachment.name}}
+                    <div class="rounded">
+                      <div *ngFor="let attachment of attachments" style="margin-bottom: 5px">
+                        <div class="row">
+                          <div class="col-8 text-under">
+                            <img class="rounded" height="50" width="50" src="{{attachment?.url}}" alt="" style="margin-right: 15px">
+                            <span (click)=onClickRedirect(attachment)>{{attachment.name}}</span>
+                          </div>
+                          <div class="col-sm">
+                          </div>
+                          <div class="col-sm align-self-end">
+                            <button type="button" class="btn btn-danger"
+                                    (click)="onDeleteAttachment(project.title, attachment.id)">Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -159,7 +172,8 @@
                 <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">
                   <div class="card-body">
                     <button (click)="onDelete(project.title)" class="btn btn-block btn-danger"
-                            [disabled]="!isAdminOrManager || !checkIfUserChangeDescription(usersAll)" routerLink="/project-list">
+                            [disabled]="!isAdminOrManager || !checkIfUserChangeDescription(usersAll)"
+                            routerLink="/project-list">
                       <span>Delete</span>
                       <i class="fas fa-sing-in-alt ml-1"></i>
                     </button>
@@ -189,7 +203,8 @@
 
                         <div class="row">
                           <div class="col d-flex justify-content-end">
-                            <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager || project.creator !== user.username">
+                            <button class="btn btn-primary" type="submit"
+                                    [disabled]="!isAdminOrManager || project.creator !== user.username">
                               <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                               <span *ngIf="refreshing">Loading...</span>
                               <span *ngIf="!refreshing">Add User</span>

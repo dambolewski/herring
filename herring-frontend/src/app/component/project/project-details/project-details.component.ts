@@ -35,6 +35,7 @@ export class ProjectDetailsComponent implements OnInit {
   public fileName!: string | null;
   public profileImage!: File | null;
   public attachments!: Attachment[];
+  public attachmentID!: string;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
@@ -46,7 +47,6 @@ export class ProjectDetailsComponent implements OnInit {
     this.oldTitle = this.project.title;
     this.usersAll = this.userService.getUsersFromLocalCache();
     this.attachments = this.project.attachments;
-    console.log(this.attachments);
   }
 
   public onProjectDetailsUpdate(projectUpdate: Project): void {
@@ -104,6 +104,21 @@ export class ProjectDetailsComponent implements OnInit {
     )
   }
 
+  public onDeleteAttachment(title: string, id: number): void {
+    this.attachmentID = id.toString();
+    this.subs.add(
+      this.projectService.deleteAttachment(title, this.attachmentID).subscribe(
+        (response: Project) => {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, 'Attachment deleted successfully');
+          this.getAttachments(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    )
+  }
+
   public getU2P(showNotification: boolean) {
     this.refreshing = true;
     this.subs.add(
@@ -122,6 +137,20 @@ export class ProjectDetailsComponent implements OnInit {
         }
       )
     );
+  }
+
+  public getAttachments(showNotification: boolean) {
+    this.subs.add(
+      this.projectService.getProject(this.project.title).subscribe(
+        (response: Project) => {
+          if (response === null || response === undefined) {
+            this.router.navigateByUrl("/project-list")
+          } else {
+            this.attachments = Object.values(response)[9];
+          }
+        }
+      )
+    )
   }
 
   public changeTitle(title: string): void {
@@ -194,6 +223,7 @@ export class ProjectDetailsComponent implements OnInit {
       this.projectService.uploadAttachment(appProject.title, formData).subscribe(
         (response: HttpEvent<any>) => {
           this.sendNotification(NotificationTypeEnum.SUCCESS, this.profileImage?.name + " added successfully.");
+          this.getAttachments(false);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -204,5 +234,9 @@ export class ProjectDetailsComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  onClickRedirect(attachment: Attachment) {
+    window.open(attachment.url);
   }
 }

@@ -37,4 +37,6 @@ public interface ProjectService {
     Task updateTask(String taskID, boolean isDone);
 
     void addAttachment(String title, MultipartFile image) throws IOException, NotAnImageFileException;
+
+    void deleteAttachment(String title, String id);
 }

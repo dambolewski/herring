@@ -125,4 +125,10 @@ public class ProjectController extends ExceptionHandling {
                                   @PathVariable("fileName") String fileName) throws IOException {
         return Files.readAllBytes(Paths.get(PROJECT_FOLDER + title + FORWARD_SLASH + fileName));
     }
+
+    @DeleteMapping("/project/deleteAttachment/{title}/{id}")
+    public ResponseEntity<HttpResponse> deleteAttachment(@PathVariable("title") String title, @PathVariable("id") String id) {
+        projectService.deleteAttachment(title, id);
+        return response(OK, ATTACHMENT_DELETED);
+    }
 }

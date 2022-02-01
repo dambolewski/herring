@@ -104,6 +104,10 @@ export class ProjectService {
     return this.http.post<HttpEvent<Project>>(this.host + "/herring/project/uploadAttachment/" + title,  formData);
   }
 
+  public deleteAttachment(title:string, attachmentID: string): Observable<Project> {
+    return this.http.delete<Project>(this.host + "/herring/project/deleteAttachment/" + title + "/" + attachmentID);
+  }
+
   public addU2PFormData(project: Project, username: string): FormData {
     const formData = new FormData();
     formData.append('title', project.title);
