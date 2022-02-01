@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Project} from "../model/project";
 import {CustomHttpResponse} from "../model/custom-http-response";
 import {TaskGroup} from "../model/task-group";
 import {Task} from "../model/task";
 import {Form} from "@angular/forms";
+import {User} from "../model/user";
 
 @Injectable({
   providedIn: 'root'
@@ -97,6 +98,10 @@ export class ProjectService {
 
   public deleteUserFromProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/deleteUserFromProject", formData);
+  }
+
+  public uploadAttachment(title: string, formData: FormData): Observable<HttpEvent<Project>>{
+    return this.http.post<HttpEvent<Project>>(this.host + "/herring/project/uploadAttachment/" + title,  formData);
   }
 
   public addU2PFormData(project: Project, username: string): FormData {

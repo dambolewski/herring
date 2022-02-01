@@ -17,6 +17,7 @@ import pl.herring.model.HttpResponse;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -61,6 +62,11 @@ public class ExceptionHandling {
 
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<HttpResponse> emailExistException(EmailExistException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(FileAlreadyExistsException.class)
+    public ResponseEntity<HttpResponse> fileAlreadyExistsException(FileAlreadyExistsException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 

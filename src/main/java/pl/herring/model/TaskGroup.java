@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.*;
 
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
@@ -27,6 +26,7 @@ public class TaskGroup implements Serializable {
     private Long id;
     private String title;
     private String shortDescription;
+    private Date creationDate;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "project_id")

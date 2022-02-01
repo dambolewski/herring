@@ -1,5 +1,6 @@
 import {User} from "./user";
 import {TaskGroup} from "./task-group";
+import {Attachment} from "./attachment";
 
 export class Project {
   public uuid!: string;
@@ -10,6 +11,7 @@ export class Project {
   public trackFlag!: boolean;
   public users!: User;
   public taskGroups!: TaskGroup[];
+  public attachments!: Attachment[];
 
   constructor() {
     this.title = '';

@@ -4,16 +4,23 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.herring.exception.domain.*;
 import pl.herring.model.HttpResponse;
 import pl.herring.model.Project;
 import pl.herring.model.Task;
+import pl.herring.model.User;
 import pl.herring.service.ProjectService;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+import static pl.herring.constant.FileConstant.*;
 import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_ADDED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_DELETED_SUCCESSFULLY;
@@ -105,5 +112,17 @@ public class ProjectController extends ExceptionHandling {
     public ResponseEntity<HttpResponse> deleteTask(@PathVariable("taskGroupID") String taskGroupID, @PathVariable("id") String id) {
         projectService.deleteTask(taskGroupID, id);
         return response(OK, TASK_DELETED_SUCCESSFULLY);
+    }
+
+    @PostMapping("/project/uploadAttachment/{title}")
+    public ResponseEntity<HttpResponse> uploadAttachment(@PathVariable("title") String title, @RequestParam("file")MultipartFile file) throws IOException, NotAnImageFileException {
+        projectService.addAttachment(title, file);
+        return response(OK, ATTACHMENT_ADDED_TO_PROJECT);
+    }
+
+    @GetMapping(path = "/project/image/{title}/{fileName}", produces = IMAGE_JPEG_VALUE)
+    public byte[] getProfileImage(@PathVariable("title") String title,
+                                  @PathVariable("fileName") String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get(PROJECT_FOLDER + title + FORWARD_SLASH + fileName));
     }
 }

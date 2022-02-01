@@ -120,7 +120,7 @@
                                     [cdkDropListData]=filterTasksToDo(taskGroup.tasks)!
                                     class="example-list"
                                     (cdkDropListDropped)="drop($event)">
-                                    <div class="example-box" *ngFor="let item of filterTasksToDo(taskGroup.tasks)!" cdkDrag>
+                                    <div class="example-box" *ngFor="let item of filterTasksToDo(taskGroup.tasks)!" cdkDrag style="background-color: #f2faff">
                                       {{item.title}}
                                       <div class="text-center text-sm-right">
                                         <button (click)="onDeleteTask(taskGroup.id, item.id)"
@@ -141,7 +141,7 @@
                                     [cdkDropListData]=filterTasksDone(taskGroup.tasks)!
                                     class="example-list"
                                     (cdkDropListDropped)="drop($event)">
-                                    <div class="example-box" *ngFor="let item of filterTasksDone(taskGroup.tasks)!" cdkDrag>
+                                    <div class="example-box" *ngFor="let item of filterTasksDone(taskGroup.tasks)!" cdkDrag style="background-color: #e6ffe6">
                                       {{item.title}}
                                       <div class="text-center text-sm-right">
                                         <button (click)="onDeleteTask(taskGroup.id, item.id)"
@@ -156,8 +156,6 @@
                               </div>
                             </div>
                           </div>
-
-
                         </div>
                       </div>
                     </div>

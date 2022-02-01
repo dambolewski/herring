@@ -116,6 +116,16 @@
                                   class="fas fa-arrow-circle-left"></i></button>
                               </div>
                               <div class="col d-flex justify-content-end">
+                                <button (click)="updateProfileImage(project)" class="btn btn-primary" type="button" style="margin-right: 10px">
+                                  <i class="fa fa-fw fa-camera"></i>
+                                  <span>Add Attachment</span>
+                                </button>
+
+                                <form enctype="multipart/form-data" style="display: none;">
+                                  <input type="file"
+                                         (change)="onProfileImageChange($event); onUpdateProfileImage(project)"
+                                         name="profileImage" id="profile-image-input" placeholder="file" accept="image/*">
+                                </form>
                                 <button class="btn btn-primary" type="submit" [disabled]="!isAdminOrManager || project.creator !== user.username || projectDetailsForm.invalid">
                                   <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                                   <span *ngIf="refreshing">Loading...</span>
@@ -129,6 +139,21 @@
                     </form>
                   </div>
                 </div>
+
+                <div class="card" style="margin-top: 10px">
+                  <div class="card-body">
+                    <span>Attachments:</span>
+                    <div class="d-flex align-items-center rounded">
+                      <div *ngFor="let attachment of attachments" style="margin: 5px">
+                        <img class="rounded" height="135" width="135" src="{{attachment?.url}}" alt="">
+                        <div class="text-under">
+                          {{attachment.name}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div class="col-12 col-md-3 mb-3">
                 <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">

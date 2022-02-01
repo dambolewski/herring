@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static pl.herring.constant.FileConstant.PROJECT_FOLDER;
 import static pl.herring.constant.FileConstant.USER_FOLDER;
 
 @SpringBootApplication
@@ -21,6 +22,7 @@ public class HerringApplication {
     public static void main(String[] args) {
         SpringApplication.run(HerringApplication.class, args);
         new File(USER_FOLDER).mkdirs();
+        new File(PROJECT_FOLDER).mkdirs();
     }
 
     @Bean

@@ -44,6 +44,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.project = history.state;
     this.tasksGroups = this.project.taskGroups;
+    this.getTaskGroups(false);
   }
 
   public changeTitle(title: string): void {

@@ -9,10 +9,11 @@ import {NotificationTypeEnum} from "../../../enum/notification-type.enum";
 import {BehaviorSubject} from "rxjs";
 import {User} from "../../../model/user";
 import {CustomHttpResponse} from "../../../model/custom-http-response";
-import {HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpEvent} from "@angular/common/http";
 import {UserService} from "../../../service/user.service";
 import {Router} from "@angular/router";
 import {NgForm} from "@angular/forms";
+import {Attachment} from "../../../model/attachment";
 
 @Component({
   selector: 'app-project-details',
@@ -31,6 +32,10 @@ export class ProjectDetailsComponent implements OnInit {
   public users!: User[];
   public usersAll!: User[] | null;
   public userTest!: User;
+  public fileName!: string | null;
+  public profileImage!: File | null;
+  public attachments!: Attachment[];
+
   constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
 
@@ -40,6 +45,8 @@ export class ProjectDetailsComponent implements OnInit {
     this.getU2P(true);
     this.oldTitle = this.project.title;
     this.usersAll = this.userService.getUsersFromLocalCache();
+    this.attachments = this.project.attachments;
+    console.log(this.attachments);
   }
 
   public onProjectDetailsUpdate(projectUpdate: Project): void {
@@ -102,7 +109,7 @@ export class ProjectDetailsComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          if(response === null || response === undefined){
+          if (response === null || response === undefined) {
             this.router.navigateByUrl("/project-list")
           } else {
             this.users = Object.values(response)[7];
@@ -146,23 +153,53 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
-  public getUsersToSelect(usersAll: User[]): User[]{
+  public getUsersToSelect(usersAll: User[]): User[] {
     let allUsersToAdd = usersAll;
     let addedUsersToProject = this.users;
     return allUsersToAdd.filter(o1 => !addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
   }
 
-  public checkIfUserChangeDescription(users: User[] | null) : boolean{
+  public checkIfUserChangeDescription(users: User[] | null): boolean {
     let creatorUsername = this.user.username;
     let addedUsersToProject = this.users;
     let result = users!.filter(o1 => addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
     let checkBoolean = false;
-    result.forEach(function (value){
+    result.forEach(function (value) {
       if (value.username === creatorUsername) {
         checkBoolean = true;
       }
     });
     return checkBoolean;
+  }
+
+
+  updateProfileImage(appProject: Project) {
+    this.clickButton('profile-image-input');
+    console.log(appProject.title);
+  }
+
+  onProfileImageChange(event: any) {
+    this.fileName = (<HTMLInputElement>event.target).files![0].name;
+    this.profileImage = (<HTMLInputElement>event.target).files![0];
+  }
+
+  private clickButton(buttonId: string): void {
+    document.getElementById(buttonId)!.click();
+  }
+
+  onUpdateProfileImage(appProject: Project) {
+    const formData = new FormData();
+    formData.append('file', this.profileImage!);
+    this.subs.add(
+      this.projectService.uploadAttachment(appProject.title, formData).subscribe(
+        (response: HttpEvent<any>) => {
+          this.sendNotification(NotificationTypeEnum.SUCCESS, this.profileImage?.name + " added successfully.");
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    );
   }
 
   ngOnDestroy(): void {
