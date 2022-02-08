@@ -36,6 +36,7 @@ export class ProjectOperationalComponent implements OnInit {
   private taskGroupID!: string;
   public todoTasks!: Task[];
   public doneTasks!: Task[];
+  public resultTaskGroups!: TaskGroup[];
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private userService: UserService) {
   }
@@ -44,6 +45,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.project = history.state;
     this.tasksGroups = this.project.taskGroups;
+    this.resultTaskGroups = this.tasksGroups;
     this.getTaskGroups(false);
   }
 
@@ -224,5 +226,15 @@ export class ProjectOperationalComponent implements OnInit {
     } else {
       return Math.round(result);
     }
+  }
+
+  searchTaskGroups(searchTerm: string) {
+    const result: TaskGroup[] = [];
+    for (const taskGroup of this.resultTaskGroups!) {
+      if (taskGroup.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+        result.push(taskGroup);
+      }
+    }
+    this.tasksGroups = result;
   }
 }

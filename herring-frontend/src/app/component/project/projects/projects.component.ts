@@ -12,6 +12,7 @@ import {ProjectService} from "../../../service/project.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {CustomHttpResponse} from "../../../model/custom-http-response";
 import {Router} from "@angular/router";
+import {TaskGroup} from "../../../model/task-group";
 
 @Component({
   selector: 'app-projects',
@@ -26,6 +27,8 @@ export class ProjectsComponent implements OnInit {
   public projects!: Project[] | null;
   public refreshing!: boolean;
   public projectTest!: Project;
+  public result!: Project[] | undefined;
+  public resultProjects!: Project[] | null;
 
   constructor(private authenticationService: AuthenticationService, private notificationService: NotificationService, private projectService: ProjectService, private router: Router) {
   }
@@ -77,6 +80,7 @@ export class ProjectsComponent implements OnInit {
       this.projectService.getProjects().subscribe(
         (response: Project[]) => {
           this.projects = response;
+          this.resultProjects = response;
           this.refreshing = false;
           if (showNotification) {
             this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + " project(s) loaded successfully.");
@@ -149,5 +153,15 @@ export class ProjectsComponent implements OnInit {
         }
       )
     );
+  }
+
+  public searchProjects(searchTerm: string): void {
+    const result: Project[] = [];
+    for (const project of this.resultProjects!) {
+      if (project.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+        result.push(project);
+      }
+    }
+    this.projects = result;
   }
 }
