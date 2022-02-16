@@ -35,7 +35,7 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.authenticationService.getUserFromLocalCache();
-    this.getProjects(true);
+    this.getProject(true);
   }
 
   public changeTitle(title: string): void {
@@ -44,6 +44,13 @@ export class ProjectsComponent implements OnInit {
 
   public saveNewProject() {
     this.clickButton('new-project-save');
+  }
+
+  public getProject(showNotification: boolean){
+    if(this.isAdmin)
+      this.getProjectsAll(true);
+    else
+      this.getProjectUsers(true);
   }
 
   public onAddNewProject(newProjectForm: NgForm): void {
@@ -56,7 +63,7 @@ export class ProjectsComponent implements OnInit {
           newProjectForm.reset();
           this.projectService.addUserToProject(formData2).subscribe(
             (response: Project) => {
-              this.getProjects(false);
+              this.getProject(false);
             }
           );
           this.sendNotification(NotificationTypeEnum.SUCCESS, response.title + " created successfully.");
@@ -69,15 +76,36 @@ export class ProjectsComponent implements OnInit {
   }
 
   public onSelectProject(selectedProject: Project): void {
-      this.projectTest = selectedProject;
-      this.router.navigateByUrl('/project-details', {state: this.projectTest});
+    this.projectTest = selectedProject;
+    this.router.navigateByUrl('/project-details', {state: this.projectTest});
   }
 
 
-  public getProjects(showNotification: boolean) {
+  public getProjectsAll(showNotification: boolean) {
     this.refreshing = true;
     this.subs.add(
       this.projectService.getProjects().subscribe(
+        (response: Project[]) => {
+          this.projects = response;
+          this.resultProjects = response;
+          this.refreshing = false;
+          if (showNotification) {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + " project(s) loaded successfully.");
+          }
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          this.refreshing = false;
+        }
+      )
+    );
+  }
+
+  public getProjectUsers(showNotification: boolean){
+    const username: string = this.user.username;
+    this.refreshing = true;
+    this.subs.add(
+      this.projectService.getUserProjects(username).subscribe(
         (response: Project[]) => {
           this.projects = response;
           this.resultProjects = response;
@@ -99,7 +127,7 @@ export class ProjectsComponent implements OnInit {
       this.projectService.deleteProject(uuid).subscribe(
         (response: CustomHttpResponse) => {
           this.sendNotification(NotificationTypeEnum.SUCCESS, 'Project deleted successfully');
-          this.getProjects(false);
+          this.getProject(false);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -139,17 +167,14 @@ export class ProjectsComponent implements OnInit {
 
   changeTrackFlag(appProject: Project) {
     console.log(appProject.trackFlag);
-    this.refreshing = true;
     const formData = this.projectService.createProjectTrackFlagFormData(appProject, appProject.creator);
     this.subs.add(
       this.projectService.updateProject(formData).subscribe(
         (response: Project) => {
-          this.refreshing = false;
-          this.getProjects(false);
+          this.getProject(false);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
-          this.refreshing = false;
         }
       )
     );
@@ -158,7 +183,9 @@ export class ProjectsComponent implements OnInit {
   public searchProjects(searchTerm: string): void {
     const result: Project[] = [];
     for (const project of this.resultProjects!) {
-      if (project.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+      if (project.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        project.uuid.indexOf(searchTerm) !== -1 ||
+        project.creator.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
         result.push(project);
       }
     }

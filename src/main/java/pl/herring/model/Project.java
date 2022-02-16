@@ -42,7 +42,9 @@ public class Project implements Serializable {
     @JsonManagedReference
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {MERGE, PERSIST}, orphanRemoval = true)
     private Collection<Attachment> attachments = new ArrayList<>();
-
+    @JsonManagedReference
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {MERGE, PERSIST}, orphanRemoval = true)
+    private Collection<Activity> activities = new ArrayList<>();
 
 
     public Project(String title) {
@@ -59,14 +61,24 @@ public class Project implements Serializable {
         taskGroup.setProject(null);
     }
 
-    public void addAttachments(Attachment attachment) {
+    public void addAttachment(Attachment attachment) {
         attachments.add(attachment);
         attachment.setProject(this);
     }
 
-    public void deleteAttachments(Attachment attachment){
+    public void deleteAttachment(Attachment attachment){
         attachments.remove(attachment);
         attachment.setProject(null);
+    }
+
+    public void addActivity(Activity activity) {
+        activities.add(activity);
+        activity.setProject(this);
+    }
+
+    public void deleteActivity(Activity activity){
+        activities.remove(activity);
+        activity.setProject(null);
     }
 
 }

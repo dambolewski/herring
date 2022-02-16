@@ -22,6 +22,8 @@ public interface ProjectService {
 
     void deleteProject(String title);
 
+    List<Project> getUserProjects(String username);
+
     Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException;
 
     void deleteUserFromProject(String title, String username) throws MessagingException;
@@ -39,4 +41,11 @@ public interface ProjectService {
     void addAttachment(String title, MultipartFile image) throws IOException, NotAnImageFileException;
 
     void deleteAttachment(String title, String id);
+
+    void addActivity(String projectTitle, String username);
+
+    void addActivity(String projectTitle, String username, String taskGroupTitle);
+
+    void addActivity(String projectTitle, String username, String taskGroupTitle, String taskTitle);
+
 }

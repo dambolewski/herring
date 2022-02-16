@@ -39,7 +39,7 @@ public class EmailService {
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(TO, InternetAddress.parse(userRepository.findByUsername(username).getEmail(), false));
         message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
-        message.setSubject(EMAIL_SUBJECT);
+        message.setSubject(EMAIL_SUBJECT_ADDED);
         message.setText("Hello " + userRepository.findByUsername(username).getFirstName() + ", \n \n You have been added to project: " + title + ".\n \n The Support Team");
         message.setSentDate(new Date());
         message.saveChanges();
@@ -55,7 +55,7 @@ public class EmailService {
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(TO, InternetAddress.parse(userRepository.findByUsername(username).getEmail(), false));
         message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
-        message.setSubject(EMAIL_SUBJECT);
+        message.setSubject(EMAIL_SUBJECT_REMOVED);
         message.setText("Hello " + userRepository.findByUsername(username).getFirstName() + ", \n \n You have been removed from project: " + title + ".\n \n The Support Team");
         message.setSentDate(new Date());
         message.saveChanges();

@@ -121,12 +121,12 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
 
 
-  public get isManagerOrHr(): boolean {
-    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER || this.getUserRole() === Role.HR;
+  public get isManager(): boolean {
+    return this.getUserRole() === Role.MANAGER;
   }
 
   public get isAdminOrManager(): boolean {
-    return this.isAdmin || this.isManagerOrHr;
+    return this.isAdmin || this.isManager;
   }
 
   private getUserRole(): string {

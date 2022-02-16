@@ -7,6 +7,8 @@ public class EmailConstant {
     public static final String FROM_EMAIL = "support@herring.com";
     public static final String CC_EMAIL = "";
     public static final String EMAIL_SUBJECT = "Herring, LLC - New Password";
+    public static final String EMAIL_SUBJECT_ADDED = "Herring, LLC - Welcome in new project";
+    public static final String EMAIL_SUBJECT_REMOVED = "Herring, LLC - Removed from project";
     public static final String GMAIL_SMTP_SERVER = "smtp.gmail.com";
     public static final String SMTP_HOST = "mail.smtp.host";
     public static final String SMTP_AUTH = "mail.smtp.auth";

@@ -21,6 +21,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static pl.herring.constant.FileConstant.*;
+import static pl.herring.constant.ProjectConstant.ACTIVITY_ADDED;
 import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_ADDED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_DELETED_SUCCESSFULLY;
@@ -36,6 +37,12 @@ public class ProjectController extends ExceptionHandling {
     @GetMapping("/project/list")
     public ResponseEntity<List<Project>> getProjects() {
         List<Project> projects = projectService.getProjects();
+        return new ResponseEntity<>(projects, OK);
+    }
+
+    @GetMapping("/project/{username}")
+    public ResponseEntity<List<Project>> getUserProjects(@PathVariable("username") String username) {
+        List<Project> projects = projectService.getUserProjects(username);
         return new ResponseEntity<>(projects, OK);
     }
 
@@ -85,7 +92,7 @@ public class ProjectController extends ExceptionHandling {
 
     @PostMapping("/project/updateTask")
     public ResponseEntity<Task> updateTask(@RequestParam("taskID") String taskID,
-                                           @RequestParam("isDone") String isDone){
+                                           @RequestParam("isDone") String isDone) {
         Task updatedTask = projectService.updateTask(taskID, Boolean.parseBoolean(isDone));
         return new ResponseEntity<>(updatedTask, OK);
     }
@@ -104,7 +111,7 @@ public class ProjectController extends ExceptionHandling {
 
     @PostMapping("/project/saveTask")
     public ResponseEntity<HttpResponse> saveTask(@RequestParam("taskGroupID") String taskGroupID, @RequestParam("tTitle") String tTitle) throws NoTaskTitleNorTaskGroupTitle, NoTaskTitleException {
-        projectService.saveTask(taskGroupID,tTitle);
+        projectService.saveTask(taskGroupID, tTitle);
         return response(OK, TASK_ADDED_SUCCESSFULLY);
     }
 
@@ -115,7 +122,7 @@ public class ProjectController extends ExceptionHandling {
     }
 
     @PostMapping("/project/uploadAttachment/{title}")
-    public ResponseEntity<HttpResponse> uploadAttachment(@PathVariable("title") String title, @RequestParam("file")MultipartFile file) throws IOException, NotAnImageFileException {
+    public ResponseEntity<HttpResponse> uploadAttachment(@PathVariable("title") String title, @RequestParam("file") MultipartFile file) throws IOException, NotAnImageFileException {
         projectService.addAttachment(title, file);
         return response(OK, ATTACHMENT_ADDED_TO_PROJECT);
     }
@@ -130,5 +137,16 @@ public class ProjectController extends ExceptionHandling {
     public ResponseEntity<HttpResponse> deleteAttachment(@PathVariable("title") String title, @PathVariable("id") String id) {
         projectService.deleteAttachment(title, id);
         return response(OK, ATTACHMENT_DELETED);
+    }
+
+    @PostMapping(value = {"/project/uploadActivity/{title}/{username}/", "/project/uploadActivity/{title}/{username}/{taskGroupTitle}", "/project/uploadActivity/{title}/{username}/{taskGroupTitle}/{taskTitle}"})
+    public ResponseEntity<HttpResponse> uploadActivity(@PathVariable("title") String title, @PathVariable("username") String username, @PathVariable(value = "taskGroupTitle", required = false) String taskGroupTitle, @PathVariable(value = "taskTitle", required = false) String taskTitle) {
+        if (taskGroupTitle == null && taskTitle == null)
+            projectService.addActivity(title, username);
+        if (taskTitle == null)
+            projectService.addActivity(title, username, taskGroupTitle);
+        else
+            projectService.addActivity(title, username, taskGroupTitle, taskTitle);
+        return response(OK, ACTIVITY_ADDED);
     }
 }

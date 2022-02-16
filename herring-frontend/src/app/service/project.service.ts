@@ -26,6 +26,10 @@ export class ProjectService {
     return this.http.get<Project>(this.host + "/herring/project/find/" + title)
   }
 
+  public getUserProjects(username: string): Observable<Project[]> {
+    return this.http.get<Project[]>(this.host + "/herring/project/" + username);
+  }
+
   public addProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/save", formData);
   }

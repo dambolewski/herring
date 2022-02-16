@@ -128,6 +128,19 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<Project> getUserProjects(String username){
+        User user = userRepository.findByUsername(username);
+        List<Project> projectList = new ArrayList<>();
+        List<Project> projects = getProjects();
+        for (Project project: projects) {
+            if(project.getUsers().contains(user)){
+                projectList.add(project);
+            }
+        }
+        return projectList;
+    }
+
+    @Override
     public void deleteProject(String title) {
         Project project = projectRepository.findByTitle(title);
         projectRepository.delete(project);
@@ -157,7 +170,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void addAttachment(String title, MultipartFile file) throws IOException, NotAnImageFileException {
         Project project = projectRepository.findByTitle(title);
         saveAttachment(project, file);
-        project.addAttachments(new Attachment(file.getOriginalFilename(), setAttachmentURL(project, file.getOriginalFilename())));
+        project.addAttachment(new Attachment(file.getOriginalFilename(), setAttachmentURL(project, file.getOriginalFilename())));
     }
 
     @Override
@@ -170,7 +183,31 @@ public class ProjectServiceImpl implements ProjectService {
         if(file.exists()){
             file.delete();
         }
-        project.deleteAttachments(attachment);
+        project.deleteAttachment(attachment);
+    }
+
+    @Override
+    public void addActivity(String projectTitle, String username){
+        Project project = projectRepository.findByTitle(projectTitle);
+        User user = userRepository.findByUsername(username);
+        String message = "User: " + user.getUsername() + " made changes in project: " + project.getTitle();
+        project.addActivity(new Activity(project.getTitle(), user.getUsername(), message, new Date()));
+    }
+
+    @Override
+    public void addActivity(String projectTitle, String username, String taskGroupTitle){
+        Project project = projectRepository.findByTitle(projectTitle);
+        User user = userRepository.findByUsername(username);
+        String message = "User: " + user.getUsername() + " made changes in task group: " + taskGroupTitle + " in project: " + project.getTitle();
+        project.addActivity(new Activity(project.getTitle(), user.getUsername(), message, new Date()));
+    }
+
+    @Override
+    public void addActivity(String projectTitle, String username, String taskGroupTitle, String taskTitle){
+        Project project = projectRepository.findByTitle(projectTitle);
+        User user = userRepository.findByUsername(username);
+        String message = "User: " + user.getUsername() + " made changes in task group: " + taskGroupTitle + " with task: " + taskTitle + " in project: " + project.getTitle();
+        project.addActivity(new Activity(project.getTitle(), user.getUsername(), message, new Date()));
     }
 
 

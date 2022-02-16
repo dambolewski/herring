@@ -223,7 +223,6 @@
                   <label for="role">Role</label>
                   <select name="role" required ngModel="ROLE_USER" class="form-control">
                     <option value="ROLE_USER">USER</option>
-                    <option value="ROLE_HR">HR</option>
                     <option value="ROLE_MANAGER">MANAGER</option>
                     <option value="ROLE_ADMIN">ADMIN</option>
                     <option value="ROLE_SUPER_ADMIN">SUPER ADMIN</option>
@@ -310,7 +309,6 @@
                   <label for="role">Role <small [hidden]="isAdmin">(read only)</small></label>
                   <select name="role" [disabled]="!isAdmin" required [(ngModel)]="editUser.role" class="form-control">
                     <option value="ROLE_USER">USER</option>
-                    <option value="ROLE_HR">HR</option>
                     <option value="ROLE_MANAGER">MANAGER</option>
                     <option value="ROLE_ADMIN">ADMIN</option>
                     <option value="ROLE_SUPER_ADMIN">SUPER ADMIN</option>

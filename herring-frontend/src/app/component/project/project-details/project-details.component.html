@@ -64,7 +64,7 @@
                                   <div class="form-group">
                                     <input type="text" name="title" required [(ngModel)]="project.title"
                                            class="form-control"
-                                           [disabled]="!isAdminOrManager || project.creator !== user.username">
+                                           [disabled]="!(isAdminOrManager || project.creator == user.username)">
                                   </div>
                                 </div>
                               </div>
@@ -85,8 +85,7 @@
                                     <div class="form-group">
                                       <label for="description">Description</label>
                                       <textarea class="form-control" id="description" rows="2" name="description"
-                                                required [(ngModel)]="project.description"
-                                                [disabled]="!checkIfUserChangeDescription(usersAll)"></textarea>
+                                                required [(ngModel)]="project.description" [disabled]="!(isAdminOrManager || project.creator == user.username)"></textarea>
                                     </div>
                                   </div>
                                 </div>
@@ -100,7 +99,7 @@
                                     <div class="custom-controls-stacked px-2">
                                       <div class="form-check">
                                         <label class="form-check-label">
-                                          <input type="checkbox" name="trackFlag" [disabled]="!isAdmin"
+                                          <input type="checkbox" name="trackFlag" [disabled]="!(isAdminOrManager || project.creator == user.username)"
                                                  [(ngModel)]="project.trackFlag"
                                                  class="form-check-input">Active <small [hidden]="isAdmin">(read
                                           only)</small>
@@ -130,7 +129,7 @@
                                          accept="image/*">
                                 </form>
                                 <button class="btn btn-primary" type="submit"
-                                        [disabled]="!isAdminOrManager || project.creator !== user.username || projectDetailsForm.invalid">
+                                        [disabled]="!(isAdminOrManager || project.creator == user.username) || projectDetailsForm.invalid">
                                   <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                                   <span *ngIf="refreshing">Loading...</span>
                                   <span *ngIf="!refreshing">Save Changes</span>
@@ -169,17 +168,17 @@
 
               </div>
               <div class="col-12 col-md-3 mb-3">
-                <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">
+                <div class="card mb-3" [hidden]="!(isAdminOrManager || project.creator == user.username)">
                   <div class="card-body">
                     <button (click)="onDelete(project.title)" class="btn btn-block btn-danger"
-                            [disabled]="!isAdminOrManager || !checkIfUserChangeDescription(usersAll)"
+                            [disabled]="!(isAdminOrManager || project.creator == user.username)"
                             routerLink="/project-list">
                       <span>Delete</span>
                       <i class="fas fa-sing-in-alt ml-1"></i>
                     </button>
                   </div>
                 </div>
-                <div class="card mb-3" [hidden]="!isAdminOrManager || project.creator !== user.username">
+                <div class="card mb-3" [hidden]="!(isAdminOrManager || project.creator == user.username)">
                   <div class="card">
                     <div class="card-body">
                       <h6 class="card-title font-weight-bold">Add User:</h6>
@@ -190,7 +189,7 @@
                             <div class="row">
                               <div class="col mb-3">
                                 <div class="form-group">
-                                  <select name="username" [disabled]="!isAdmin" required [(ngModel)]="user.username"
+                                  <select name="username" [disabled]="!(isAdminOrManager || project.creator == user.username)" required [(ngModel)]="user.username"
                                           class="form-control">
                                     <option *ngFor="let user of getUsersToSelect(usersAll!)"
                                             [value]="user.username">{{user.username}}</option>
@@ -204,7 +203,7 @@
                         <div class="row">
                           <div class="col d-flex justify-content-end">
                             <button class="btn btn-primary" type="submit"
-                                    [disabled]="!isAdminOrManager || project.creator !== user.username">
+                                    [disabled]="!(isAdminOrManager || project.creator == user.username)">
                               <i *ngIf="refreshing" class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;
                               <span *ngIf="refreshing">Loading...</span>
                               <span *ngIf="!refreshing">Add User</span>
@@ -219,8 +218,8 @@
                   <div class="card">
                     <div class="card-body">
                       <h6 class="card-title font-weight-bold">Participating users:</h6>
-                      <h6 *ngFor="let user of users" class="card-text">{{user.username}}
-                        <button class="btn btn-secondary" (click)="deleteUserFromProject(user, addU2PForm)">
+                      <h6 *ngFor="let userDel of users" class="card-text">{{userDel.username}}
+                        <button [disabled]="!(isAdminOrManager || project.creator == user.username)" class="btn btn-secondary" (click)="deleteUserFromProject(userDel, addU2PForm)">
                           <i class="fas fa-user-minus"></i>
                         </button>
                       </h6>

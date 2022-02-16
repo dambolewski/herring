@@ -55,7 +55,7 @@
                  (ngModelChange)="searchProjects(searchForm.value)" type="search"
                  placeholder="Search projects...">
         </form>
-        <button type="button" (click)="getProjects(true)" class="btn btn-info" style="float:right">
+        <button type="button" (click)="getProject(true)" class="btn btn-info" style="float:right">
           <i *ngIf="refreshing" class="fas fa-sync fa-spin"></i><i *ngIf="!refreshing" class="fas fa-sync"></i>
         </button>
       </div>

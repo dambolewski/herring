@@ -10,6 +10,8 @@ import {NotificationService} from "../../service/notification.service";
 import {ProjectService} from "../../service/project.service";
 import {Router} from "@angular/router";
 import {UserService} from "../../service/user.service";
+import {Project} from "../../model/project";
+import {Activity} from "../../model/activity";
 
 @Component({
   selector: 'app-home',
@@ -22,13 +24,16 @@ export class HomeComponent implements OnInit {
   public user!: User;
   private subs = new SubSink();
   public users!: User[] | null;
+  public projects!: Project[] | null;
+  public activities!: Activity[];
 
-  constructor(private userService: UserService, private notificationService: NotificationService, private authenticationService: AuthenticationService, private router: Router) {
+  constructor(private userService: UserService, private notificationService: NotificationService, private authenticationService: AuthenticationService, private projectService: ProjectService) {
   }
 
   ngOnInit(): void {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.getUsers(false);
+    this.getProjects(false);
   }
 
   public getUsers(showNotification: boolean): void {
@@ -37,8 +42,16 @@ export class HomeComponent implements OnInit {
         (response: User[]) => {
           this.userService.addUsersToLocalCache(response);
           this.users = response;
-        },
-        (errorResponse: HttpErrorResponse) => {
+        }
+      )
+    );
+  }
+
+  public getProjects(showNotification: boolean) {
+    this.subs.add(
+      this.projectService.getProjects().subscribe(
+        (response: Project[]) => {
+          this.projects = response;
         }
       )
     );
@@ -53,12 +66,12 @@ export class HomeComponent implements OnInit {
   }
 
 
-  public get isManagerOrHr(): boolean {
-    return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.MANAGER || this.getUserRole() === Role.HR;
+  public get isManager(): boolean {
+    return this.getUserRole() === Role.MANAGER;
   }
 
   public get isAdminOrManager(): boolean {
-    return this.isAdmin || this.isManagerOrHr;
+    return this.isAdmin || this.isManager;
   }
 
   private getUserRole(): string {
