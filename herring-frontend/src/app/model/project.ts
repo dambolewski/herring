@@ -14,6 +14,8 @@ export class Project {
   public taskGroups!: TaskGroup[];
   public attachments!: Attachment[];
   public activities!: Activity[];
+  public status!: boolean;
+  public completionDate!: Date;
 
   constructor() {
     this.title = '';

@@ -61,11 +61,11 @@ export class ProjectOperationalComponent implements OnInit {
     return this.authenticationService.getUserFromLocalCache().role;
   }
 
-  drop(event: CdkDragDrop<Task[]>) {
+  drop(event: CdkDragDrop<Task[]>, taskGroupID: number) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      this.onTaskUpdate(event.previousContainer.data[event.previousIndex].id, event.previousContainer.data[event.previousIndex].done);
+      this.onTaskUpdate(event.previousContainer.data[event.previousIndex].id, event.previousContainer.data[event.previousIndex].done, taskGroupID);
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -131,7 +131,7 @@ export class ProjectOperationalComponent implements OnInit {
           if (response === null || response === undefined) {
             this.router.navigateByUrl("/project-list")
           } else {
-            this.tasksGroups = Object?.values(response)[8];
+            this.tasksGroups = Object?.values(response)[10];
           }
           this.refreshing = false;
         },
@@ -148,7 +148,7 @@ export class ProjectOperationalComponent implements OnInit {
     this.subs.add(
       this.projectService.getProject(this.project.title).subscribe(
         (response: Project) => {
-          this.tasksGroups = Object?.values(response)[8];
+          this.tasksGroups = Object?.values(response)[10];
           this.tasks = this.tasksGroups[0]?.tasks;
           this.refreshing = false;
         },
@@ -160,12 +160,18 @@ export class ProjectOperationalComponent implements OnInit {
     );
   }
 
-  public onTaskUpdate(taskID: number, isDone: boolean): void {
+  public onTaskUpdate(taskID: number, isDone: boolean, taskGroupID: number): void {
     const formData = this.projectService.createTaskFormDate(String(taskID!), !isDone!);
+    const formData2 = new FormData();
+    formData2.append('title', this.project.title);
+    formData2.append('username', this.user.username);
+    formData2.append('taskGroupID', taskGroupID.toString());
+    formData2.append('taskID', taskID.toString())
     this.subs.add(
       this.projectService.updateTask(formData).subscribe(
         (response: Task) => {
           this.getTasks(false);
+          this.projectService.uploadActivity(formData2).subscribe();
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -206,17 +212,17 @@ export class ProjectOperationalComponent implements OnInit {
     )
   }
 
-  filterTasksToDo(tasks: Task[]) {
+  public filterTasksToDo(tasks: Task[]) {
     this.todoTasks = tasks?.filter(t => !t.done);
     return this.todoTasks;
   }
 
-  filterTasksDone(tasks: Task[]) {
+  public filterTasksDone(tasks: Task[]) {
     this.todoTasks = tasks?.filter(t => t.done);
     return this.todoTasks;
   }
 
-  getPercentages(allTasks: TaskGroup): number {
+  public getPercentages(allTasks: TaskGroup): number {
     let all = allTasks?.tasks?.length;
     let done = this.filterTasksDone(allTasks?.tasks)?.length;
     let result = ((done / all) * 100);
@@ -228,13 +234,50 @@ export class ProjectOperationalComponent implements OnInit {
     }
   }
 
-  searchTaskGroups(searchTerm: string) {
+  public searchTaskGroups(searchTerm: string) {
+    const taskGroups: TaskGroup[] = this.resultTaskGroups;
     const result: TaskGroup[] = [];
-    for (const taskGroup of this.resultTaskGroups!) {
+    for (const taskGroup of taskGroups) {
       if (taskGroup.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
         result.push(taskGroup);
       }
     }
     this.tasksGroups = result;
+  }
+
+  checkIfTaskGroupCompleted(taskGroup: TaskGroup) {
+    const formData2 = new FormData();
+    formData2.append('title', this.project.title);
+    formData2.append('username', this.user.username);
+    formData2.append('taskGroupID', taskGroup.id.toString());
+    if (this.getPercentages(taskGroup) == 100) {
+      const formData = this.projectService.createTaskGroupFormDate(String(taskGroup.id!), !taskGroup.done!);
+      this.subs.add(
+        this.projectService.updateTaskGroup(formData).subscribe(
+          (response: TaskGroup) => {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, taskGroup.title + ' set to status: completed');
+            this.getTaskGroups(false);
+            this.projectService.uploadActivity(formData2).subscribe();
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          }
+        )
+      );
+    } else {
+      const formData = this.projectService.createTaskGroupFormDate(String(taskGroup.id!), !taskGroup.done!);
+      this.subs.add(
+        this.projectService.updateTaskGroup(formData).subscribe(
+          (response: TaskGroup) => {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, taskGroup.title + ' set to status: working');
+            this.getTaskGroups(false);
+            this.projectService.uploadActivity(formData2).subscribe();
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          }
+        )
+      );
+    }
   }
 }

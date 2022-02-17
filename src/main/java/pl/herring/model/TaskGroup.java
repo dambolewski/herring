@@ -25,7 +25,7 @@ public class TaskGroup implements Serializable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String title;
-    private String shortDescription;
+    private boolean done;
     private Date creationDate;
     @JsonBackReference
     @ManyToOne

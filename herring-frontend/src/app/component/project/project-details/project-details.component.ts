@@ -52,11 +52,17 @@ export class ProjectDetailsComponent implements OnInit {
   public onProjectDetailsUpdate(projectUpdate: Project): void {
     this.refreshing = true;
     const formData = this.projectService.createProjectDetailsFormDate(this.oldTitle, projectUpdate, this.project.creator);
+    const formData2 = new FormData();
+    formData2.append('title', projectUpdate.title);
+    formData2.append('username',this.user.username);
     this.subs.add(
       this.projectService.updateProject(formData).subscribe(
         (response: Project) => {
           this.refreshing = false;
-          this.sendNotification(NotificationTypeEnum.SUCCESS, projectUpdate.title + " project updated successfully.")
+          this.sendNotification(NotificationTypeEnum.SUCCESS, projectUpdate.title + " project updated successfully.");
+          this.projectService.uploadActivity(formData2).subscribe(
+
+          );
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -127,7 +133,7 @@ export class ProjectDetailsComponent implements OnInit {
           if (response === null || response === undefined) {
             this.router.navigateByUrl("/project-list")
           } else {
-            this.users = Object.values(response)[7];
+            this.users = Object.values(response)[9];
           }
           this.refreshing = false;
         },
@@ -146,7 +152,7 @@ export class ProjectDetailsComponent implements OnInit {
           if (response === null || response === undefined) {
             this.router.navigateByUrl("/project-list")
           } else {
-            this.attachments = Object.values(response)[9];
+            this.attachments = Object.values(response)[11];
           }
         }
       )
@@ -187,20 +193,6 @@ export class ProjectDetailsComponent implements OnInit {
     let addedUsersToProject = this.users;
     return allUsersToAdd.filter(o1 => !addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
   }
-
-  public checkIfUserChangeDescription(users: User[] | null): boolean {
-    let creatorUsername = this.user.username;
-    let addedUsersToProject = this.users;
-    let result = users!.filter(o1 => addedUsersToProject?.some(o2 => o1?.userId === o2?.userId));
-    let checkBoolean = false;
-    result.forEach(function (value) {
-      if (value.username === creatorUsername) {
-        checkBoolean = true;
-      }
-    });
-    return checkBoolean;
-  }
-
 
   updateProfileImage(appProject: Project) {
     this.clickButton('profile-image-input');

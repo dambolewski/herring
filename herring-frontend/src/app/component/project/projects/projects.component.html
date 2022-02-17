@@ -71,6 +71,7 @@
         <th>Title</th>
         <th>Creator</th>
         <th>Track</th>
+        <th>Status</th>
         <th>Actions</th>
       </tr>
       </thead>
@@ -83,13 +84,22 @@
           <span [hidden]="!appProject?.trackFlag" class="badge badge-success"><i class="fa fa-flag"></i></span>
           <span [hidden]="appProject?.trackFlag" class="badge badge-danger"><i class="fa fa-flag"></i></span>
         </td>
+        <td *ngIf="appProject.status == false">Not Completed</td>
+        <td *ngIf="appProject.status == true">Completed</td>
         <td class="">
           <div class="btn-group">
             <button class="btn btn-outline-info" (click)="onSelectProject(appProject)">
               <i class="fas fa-external-link-alt"></i>
             </button>
-            <button [hidden]="!isAdmin" class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
+            <button [hidden]="!(isAdmin || appProject.creator == user.username) " class="btn btn-outline-danger" (click)="onDelete(appProject.title!)">
               <i class="fas fa-trash"></i>
+            </button>
+            <button [hidden]="!(isAdmin)" [disabled]="!appProject.status" class="btn btn-outline-danger" (click)="onProjectWorking(appProject)">
+              <i class="fas fa-hammer"></i>
+            </button>
+            <button class="btn btn-outline-success" (click)="onProjectComplete(appProject, onProjectCompleteCheck(appProject))"
+            [disabled]="!onProjectCompleteCheck(appProject) || appProject.status">
+              <i class="fa fa-check"></i>
             </button>
           </div>
         </td>

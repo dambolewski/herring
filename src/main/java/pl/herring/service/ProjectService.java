@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.herring.exception.domain.*;
 import pl.herring.model.Project;
 import pl.herring.model.Task;
+import pl.herring.model.TaskGroup;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public interface ProjectService {
 
     List<Project> getUserProjects(String username);
 
-    Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException;
+    Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag, boolean isDone) throws ProjectNotFoundException, NoTitleException, UsernameExistException;
 
     void deleteUserFromProject(String title, String username) throws MessagingException;
 
@@ -38,6 +39,8 @@ public interface ProjectService {
 
     Task updateTask(String taskID, boolean isDone);
 
+    TaskGroup updateTaskGroup(String taskGroupId, boolean done);
+
     void addAttachment(String title, MultipartFile image) throws IOException, NotAnImageFileException;
 
     void deleteAttachment(String title, String id);
@@ -47,5 +50,4 @@ public interface ProjectService {
     void addActivity(String projectTitle, String username, String taskGroupTitle);
 
     void addActivity(String projectTitle, String username, String taskGroupTitle, String taskTitle);
-
 }

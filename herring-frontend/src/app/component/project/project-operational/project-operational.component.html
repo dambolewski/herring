@@ -89,11 +89,21 @@
                                     <div class="col-sm">
                                     </div>
                                     <div class="col-sm">
-                                    </div>
-                                    <div class="col-sm">
                                       <div class="row">
+                                        <div class="col-sm" *ngIf="getPercentages(taskGroup) == 100">
+                                          <button (click)="checkIfTaskGroupCompleted(taskGroup)" class="btn btn-success btn-my"
+                                          [disabled]="(getPercentages(taskGroup) == 100 && taskGroup.done)">
+                                            <i class="fa fa-check"></i>
+                                            <span> Check</span></button>
+                                        </div>
+                                        <div class="col-sm" *ngIf="getPercentages(taskGroup) !== 100">
+                                          <button (click)="checkIfTaskGroupCompleted(taskGroup)" class="btn btn-secondary btn-my"
+                                          [disabled]="(getPercentages(taskGroup) !== 100 && !taskGroup.done)">
+                                            <i class="fa fa-hammer"></i>
+                                            <span> Work</span></button>
+                                        </div>
                                         <div class="col-sm text-right">
-                                          <button type="button" class="btn btn-primary" data-toggle="modal"
+                                          <button type="button" class="btn btn-primary btn-my" data-toggle="modal"
                                                   data-backdrop="false"
                                                   [attr.data-target]="'#id' + taskGroup.id">
                                             <i class="fa fa-plus"></i>
@@ -101,7 +111,7 @@
                                           </button>
                                         </div>
                                         <div class="col-sm">
-                                          <button (click)="onDelete(taskGroup.id)" class="btn btn-block btn-danger">
+                                          <button (click)="onDelete(taskGroup.id)" class="btn btn-block btn-danger btn-my">
                                             <i class="fa fa-trash"></i>
                                             <span> Delete</span>
                                           </button>
@@ -122,7 +132,7 @@
                                         cdkDropList
                                         [cdkDropListData]=filterTasksToDo(taskGroup.tasks)!
                                         class="example-list"
-                                        (cdkDropListDropped)="drop($event)">
+                                        (cdkDropListDropped)="drop($event, taskGroup.id)">
                                         <div class="example-box" *ngFor="let item of filterTasksToDo(taskGroup.tasks)!"
                                              cdkDrag style="background-color: #f2faff">
                                           {{item.title}}
@@ -144,7 +154,7 @@
                                         cdkDropList
                                         [cdkDropListData]=filterTasksDone(taskGroup.tasks)!
                                         class="example-list"
-                                        (cdkDropListDropped)="drop($event)">
+                                        (cdkDropListDropped)="drop($event, taskGroup.id)">
                                         <div class="example-box" *ngFor="let item of filterTasksDone(taskGroup.tasks)!"
                                              cdkDrag style="background-color: #e6ffe6">
                                           {{item.title}}

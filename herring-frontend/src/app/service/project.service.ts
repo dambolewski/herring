@@ -8,6 +8,7 @@ import {TaskGroup} from "../model/task-group";
 import {Task} from "../model/task";
 import {Form} from "@angular/forms";
 import {User} from "../model/user";
+import {Activity} from "../model/activity";
 
 @Injectable({
   providedIn: 'root'
@@ -42,42 +43,12 @@ export class ProjectService {
     return this.http.post<Project>(this.host + "/herring/project/saveTask", formData);
   }
 
-  public createProjectFormDate(project: Project, loggedUsername: string): FormData {
-    const formData = new FormData();
-    formData.append('title', project.title);
-    formData.append('creator', loggedUsername);
-    return formData;
-  }
-
-  public createProjectDetailsFormDate(currentTitle: string, project: Project, creator: string): FormData {
-    const formData = new FormData();
-    formData.append('currentTitle', currentTitle);
-    formData.append('title', project.title);
-    formData.append('trackFlag', JSON.stringify(project.trackFlag));
-    formData.append('description', project.description);
-    formData.append('creator', creator);
-    return formData;
-  }
-
-  public createProjectTrackFlagFormData(project: Project, creator: string): FormData {
-    const formData = new FormData();
-    formData.append('currentTitle', project.title);
-    formData.append('title', project.title);
-    formData.append('trackFlag', JSON.stringify(!project.trackFlag));
-    formData.append('description', project.description);
-    formData.append('creator', creator);
-    return formData;
-  }
-
-  public createTaskFormDate(taskID: string, isDone: boolean): FormData{
-    const formData = new FormData();
-    formData.append('taskID', taskID);
-    formData.append('isDone', JSON.stringify(isDone));
-    return formData;
-  }
-
   public updateProject(formData: FormData): Observable<Project> {
     return this.http.post<Project>(this.host + "/herring/project/update", formData);
+  }
+
+  public updateTaskGroup(formData: FormData): Observable<TaskGroup> {
+    return this.http.post<TaskGroup>(this.host + "/herring/project/updateTaskGroup", formData);
   }
 
   public updateTask(formData: FormData): Observable<Task> {
@@ -104,12 +75,72 @@ export class ProjectService {
     return this.http.post<Project>(this.host + "/herring/project/deleteUserFromProject", formData);
   }
 
-  public uploadAttachment(title: string, formData: FormData): Observable<HttpEvent<Project>>{
-    return this.http.post<HttpEvent<Project>>(this.host + "/herring/project/uploadAttachment/" + title,  formData);
+  public uploadAttachment(title: string, formData: FormData): Observable<HttpEvent<Project>> {
+    return this.http.post<HttpEvent<Project>>(this.host + "/herring/project/uploadAttachment/" + title, formData);
   }
 
-  public deleteAttachment(title:string, attachmentID: string): Observable<Project> {
+  public deleteAttachment(title: string, attachmentID: string): Observable<Project> {
     return this.http.delete<Project>(this.host + "/herring/project/deleteAttachment/" + title + "/" + attachmentID);
+  }
+
+  public uploadActivity(formData: FormData): Observable<any>{
+    return this.http.post<any>(this.host + "/herring/project/uploadActivity/", formData);
+  }
+
+
+  public createProjectFormDate(project: Project, loggedUsername: string): FormData {
+    const formData = new FormData();
+    formData.append('title', project.title);
+    formData.append('creator', loggedUsername);
+    return formData;
+  }
+
+  public createProjectDetailsFormDate(currentTitle: string, project: Project, creator: string): FormData {
+    const formData = new FormData();
+    formData.append('currentTitle', currentTitle);
+    formData.append('title', project.title);
+    formData.append('trackFlag', JSON.stringify(project.trackFlag));
+    formData.append('description', project.description);
+    formData.append('creator', creator);
+    formData.append('done', JSON.stringify(project.status));
+    return formData;
+  }
+
+  public createProjectTrackFlagFormData(project: Project, creator: string): FormData {
+    const formData = new FormData();
+    formData.append('currentTitle', project.title);
+    formData.append('title', project.title);
+    formData.append('trackFlag', JSON.stringify(!project.trackFlag));
+    formData.append('description', project.description);
+    formData.append('creator', creator);
+    formData.append('done', JSON.stringify(project.status));
+    return formData;
+  }
+
+  public createProjectCompleteFormData(project: Project): FormData {
+    const formData = new FormData();
+    formData.append('currentTitle', project.title);
+    formData.append('title', project.title);
+    formData.append('trackFlag', JSON.stringify(project.trackFlag));
+    formData.append('description', project.description);
+    formData.append('creator', project.creator);
+    formData.append('done', JSON.stringify(!project.status));
+    return formData;
+  }
+
+
+  public createTaskFormDate(taskID: string, isDone: boolean): FormData {
+    const formData = new FormData();
+    formData.append('taskID', taskID);
+    formData.append('isDone', JSON.stringify(isDone));
+    return formData;
+  }
+
+  public createTaskGroupFormDate(taskGroupId: string, done: boolean): FormData {
+    const formData = new FormData();
+    formData.append('taskGroupId', taskGroupId);
+    formData.append('done', JSON.stringify(done));
+    return formData;
   }
 
   public addU2PFormData(project: Project, username: string): FormData {

@@ -33,6 +33,8 @@ public class Project implements Serializable {
     private String creator;
     private boolean trackFlag;
     private Date creationDate;
+    private Date completionDate;
+    private boolean status;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {MERGE, PERSIST})
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<User> users = new ArrayList<>();

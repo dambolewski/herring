@@ -13,6 +13,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {CustomHttpResponse} from "../../../model/custom-http-response";
 import {Router} from "@angular/router";
 import {TaskGroup} from "../../../model/task-group";
+import {publish} from "rxjs/operators";
 
 @Component({
   selector: 'app-projects',
@@ -46,8 +47,8 @@ export class ProjectsComponent implements OnInit {
     this.clickButton('new-project-save');
   }
 
-  public getProject(showNotification: boolean){
-    if(this.isAdmin)
+  public getProject(showNotification: boolean) {
+    if (this.isAdmin)
       this.getProjectsAll(true);
     else
       this.getProjectUsers(true);
@@ -101,7 +102,7 @@ export class ProjectsComponent implements OnInit {
     );
   }
 
-  public getProjectUsers(showNotification: boolean){
+  public getProjectUsers(showNotification: boolean) {
     const username: string = this.user.username;
     this.refreshing = true;
     this.subs.add(
@@ -162,16 +163,22 @@ export class ProjectsComponent implements OnInit {
 
   onSelectToOperations(appProject: Project) {
     this.projectTest = appProject;
-    this.router.navigateByUrl('/project-operations', {state: this.projectTest});
+    if (!appProject.status)
+      this.router.navigateByUrl('/project-operations', {state: this.projectTest});
   }
 
   changeTrackFlag(appProject: Project) {
-    console.log(appProject.trackFlag);
+    const formData2 = new FormData();
+    formData2.append('title', appProject.title);
+    formData2.append('username',this.user.username);
     const formData = this.projectService.createProjectTrackFlagFormData(appProject, appProject.creator);
     this.subs.add(
       this.projectService.updateProject(formData).subscribe(
         (response: Project) => {
           this.getProject(false);
+          this.projectService.uploadActivity(formData2).subscribe(
+
+          );
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
@@ -190,5 +197,51 @@ export class ProjectsComponent implements OnInit {
       }
     }
     this.projects = result;
+  }
+
+  public onProjectCompleteCheck(project: Project): boolean {
+    let checker = false;
+    for(let value of project.taskGroups){
+      checker = value.done;
+    }
+    return checker;
+  }
+
+  public onProjectComplete(project: Project, checker: boolean) {
+    if (checker) {
+      const formData = this.projectService.createProjectCompleteFormData(project);
+      const formData2 = new FormData();
+      formData2.append('title', project.title);
+      formData2.append('username',this.user.username);
+
+      this.subs.add(
+        this.projectService.updateProject(formData).subscribe(
+          (response: Project) => {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, project.title + " project completed successfully. Congratulations.");
+            this.getProject(false);
+            this.projectService.uploadActivity(formData2).subscribe(
+
+            );
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+          }
+        )
+      );
+    }
+  }
+
+  public onProjectWorking(project:Project) {
+    const formData = this.projectService.createProjectCompleteFormData(project);
+    this.subs.add(
+      this.projectService.updateProject(formData).subscribe(
+        (response: Project) => {
+          this.getProject(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
+        }
+      )
+    );
   }
 }

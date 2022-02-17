@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -21,6 +22,7 @@ public class Task implements Serializable {
     private Long id;
     private String title;
     private boolean done = false;
+    private Date creationDate;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "task_group_id")

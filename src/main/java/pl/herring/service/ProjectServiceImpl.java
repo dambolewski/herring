@@ -58,6 +58,9 @@ public class ProjectServiceImpl implements ProjectService {
         project.setCreationDate(new Date());
         project.setCreator(creator);
         project.setTrackFlag(false);
+        project.setStatus(false);
+        project.setCreationDate(new Date());
+        project.setCompletionDate(null);
         return projectRepository.save(project);
     }
 
@@ -88,6 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
         TaskGroup taskGroup = new TaskGroup(temp);
         Project project = projectRepository.findByTitle(projectTitle);
         taskGroup.setCreationDate(new Date());
+        taskGroup.setDone(false);
         project.addTaskGroup(taskGroup);
     }
 
@@ -104,7 +108,10 @@ public class ProjectServiceImpl implements ProjectService {
         validateTaskToTaskGroup(taskTitle, taskGroupID);
         Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(taskGroupID));
         TaskGroup taskGroup = optional.get();
-        taskGroup.addTask(new Task(taskTitle));
+        Task task = new Task(taskTitle);
+        task.setDone(false);
+        task.setCreationDate(new Date());
+        taskGroup.addTask(task);
     }
 
     @Override
@@ -147,14 +154,26 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException {
+    public Project updateProject(String currentTitle, String newTitle, String newDescription, String newCreator, boolean newTrackFlag, boolean isDone) throws ProjectNotFoundException, NoTitleException, UsernameExistException {
         Project currentProject = validateProject(currentTitle, newCreator);
         currentProject.setTitle(newTitle);
         currentProject.setDescription(newDescription);
         currentProject.setCreator(newCreator);
         currentProject.setTrackFlag(newTrackFlag);
+        currentProject.setStatus(isDone);
+        if(isDone)
+            currentProject.setCompletionDate(new Date());
         projectRepository.save(currentProject);
         return currentProject;
+    }
+
+    @Override
+    public TaskGroup updateTaskGroup(String taskGroupId, boolean done) {
+        Optional<TaskGroup> optional = taskGroupRepository.findById(Long.valueOf(taskGroupId));
+        TaskGroup taskGroup = optional.get();
+        taskGroup.setDone(done);
+        taskGroupRepository.save(taskGroup);
+        return taskGroup;
     }
 
     @Override
@@ -203,10 +222,14 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void addActivity(String projectTitle, String username, String taskGroupTitle, String taskTitle){
+    public void addActivity(String projectTitle, String username, String taskGroupID, String taskID){
+        Optional<TaskGroup> optional2 = taskGroupRepository.findById(Long.valueOf(taskGroupID));
+        TaskGroup taskGroup = optional2.get();
+        Optional<Task> optional = taskRepository.findById(Long.valueOf(taskID));
+        Task task = optional.get();
         Project project = projectRepository.findByTitle(projectTitle);
         User user = userRepository.findByUsername(username);
-        String message = "User: " + user.getUsername() + " made changes in task group: " + taskGroupTitle + " with task: " + taskTitle + " in project: " + project.getTitle();
+        String message = "User: " + user.getUsername() + " made changes in task group: " + taskGroup.getTitle() + " with task: " + task.getTitle() + " in project: " + project.getTitle();
         project.addActivity(new Activity(project.getTitle(), user.getUsername(), message, new Date()));
     }
 

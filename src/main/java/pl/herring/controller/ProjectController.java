@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.herring.exception.domain.*;
-import pl.herring.model.HttpResponse;
-import pl.herring.model.Project;
-import pl.herring.model.Task;
-import pl.herring.model.User;
+import pl.herring.model.*;
 import pl.herring.service.ProjectService;
 
 import javax.mail.MessagingException;
@@ -85,9 +82,17 @@ public class ProjectController extends ExceptionHandling {
                                                  @RequestParam("title") String title,
                                                  @RequestParam(value = "description", required = false) String description,
                                                  @RequestParam(value = "creator", required = false) String creator,
-                                                 @RequestParam("trackFlag") String trackFlag) throws ProjectNotFoundException, NoTitleException, UsernameExistException {
-        Project updatedProject = projectService.updateProject(currentTitle, title, description, creator, Boolean.parseBoolean(trackFlag));
+                                                 @RequestParam("trackFlag") String trackFlag,
+                                                 @RequestParam("done") String done) throws ProjectNotFoundException, NoTitleException, UsernameExistException {
+        Project updatedProject = projectService.updateProject(currentTitle, title, description, creator, Boolean.parseBoolean(trackFlag), Boolean.parseBoolean(done));
         return new ResponseEntity<>(updatedProject, OK);
+    }
+
+    @PostMapping("/project/updateTaskGroup")
+    public ResponseEntity<TaskGroup> updateTaskGroup(@RequestParam("taskGroupId") String taskGroupId,
+                                                     @RequestParam("done") String done) {
+        TaskGroup updatedTaskGroup = projectService.updateTaskGroup(taskGroupId, Boolean.parseBoolean(done));
+        return new ResponseEntity<>(updatedTaskGroup, OK);
     }
 
     @PostMapping("/project/updateTask")
@@ -139,14 +144,14 @@ public class ProjectController extends ExceptionHandling {
         return response(OK, ATTACHMENT_DELETED);
     }
 
-    @PostMapping(value = {"/project/uploadActivity/{title}/{username}/", "/project/uploadActivity/{title}/{username}/{taskGroupTitle}", "/project/uploadActivity/{title}/{username}/{taskGroupTitle}/{taskTitle}"})
-    public ResponseEntity<HttpResponse> uploadActivity(@PathVariable("title") String title, @PathVariable("username") String username, @PathVariable(value = "taskGroupTitle", required = false) String taskGroupTitle, @PathVariable(value = "taskTitle", required = false) String taskTitle) {
-        if (taskGroupTitle == null && taskTitle == null)
+    @PostMapping("/project/uploadActivity")
+    public ResponseEntity<HttpResponse> uploadActivity(@RequestParam("title") String title, @RequestParam("username") String username, @RequestParam(value = "taskGroupID", required = false) String taskGroupID, @RequestParam(value = "taskID", required = false) String taskID) {
+        if (taskGroupID == null && taskID == null)
             projectService.addActivity(title, username);
-        if (taskTitle == null)
-            projectService.addActivity(title, username, taskGroupTitle);
+        else if (taskID == null)
+            projectService.addActivity(title, username, taskGroupID);
         else
-            projectService.addActivity(title, username, taskGroupTitle, taskTitle);
+            projectService.addActivity(title, username, taskGroupID, taskID);
         return response(OK, ACTIVITY_ADDED);
     }
 }

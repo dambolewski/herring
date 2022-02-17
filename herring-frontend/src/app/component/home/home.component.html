@@ -47,29 +47,45 @@
     Welcome to Herring.
     <br>
     If you want to check activities in your project, click interesting one.
-    <div class="tab-pane fade show active" id="projects">
-      <div *ngFor="let project of projects">
-        <button type="button" class="btn btn-primary custom" data-toggle="modal"
-                data-backdrop="false"
-                [attr.data-target]="'#id' + project.uuid">
-          <span>{{project.title}}</span>
-        </button>
-
+    <div class="tab-pane fade show active" id="projects2">
+      <table class="table table-hover">
+        <thead class="table-borderless">
+        <tr class="text-center">
+          <th>UUID</th>
+          <th>Title</th>
+          <th>Creator</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody *ngFor="let appProject of projects">
+        <tr class="text-center">
+          <td>{{appProject.uuid}}</td>
+          <td>
+            <button type="button" class="btn btn-outline-primary custom" data-toggle="modal"
+                    data-backdrop="false"
+                    [attr.data-target]="'#id' + appProject.uuid">
+              <span>{{appProject.title}}</span>
+            </button>
+          </td>
+          <td>{{appProject.creator}}</td>
+          <td *ngIf="appProject.status == false">Not Completed</td>
+          <td *ngIf="appProject.status == true">Completed</td>
+        </tr>
 
         <!-- Modal -->
-        <div class="modal fade" id="id{{project.uuid}}" tabindex="-1" role="dialog"
+        <div class="modal fade" id="id{{appProject.uuid}}" tabindex="-1" role="dialog"
              aria-labelledby="exampleModalLongTitle" aria-hidden="true">
           <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">{{project.title}}</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">{{appProject.title}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <div class="card" *ngFor="let act of project.activities" style="margin-bottom: 5px">
-                  <div class="card-body" >
+                <div class="card" *ngFor="let act of appProject.activities" style="margin-bottom: 5px">
+                  <div class="card-body">
                     <div class="e-profile">
                       {{act.creationDate | date: 'medium'}}
                       <br>
@@ -84,8 +100,8 @@
             </div>
           </div>
         </div>
-
-      </div>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

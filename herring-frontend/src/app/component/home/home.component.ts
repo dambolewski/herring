@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   public users!: User[] | null;
   public projects!: Project[] | null;
   public activities!: Activity[];
+  public resultProjects!: Project[] | null;
 
   constructor(private userService: UserService, private notificationService: NotificationService, private authenticationService: AuthenticationService, private projectService: ProjectService) {
   }
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.authenticationService.getUserFromLocalCache();
     this.getUsers(false);
-    this.getProjects(false);
+    this.getProject(false);
   }
 
   public getUsers(showNotification: boolean): void {
@@ -47,14 +48,53 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  public getProjects(showNotification: boolean) {
+  public getProject(showNotification: boolean) {
+    if (this.isAdmin)
+      this.getProjectsAll(true);
+    else
+      this.getProjectUsers(true);
+  }
+
+  public getProjectsAll(showNotification: boolean) {
     this.subs.add(
       this.projectService.getProjects().subscribe(
         (response: Project[]) => {
           this.projects = response;
+          this.resultProjects = response;
+          if (showNotification) {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + " project(s) loaded successfully.");
+          }
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendNotification(NotificationTypeEnum.ERROR, errorResponse.error.message);
         }
       )
     );
+  }
+
+  public getProjectUsers(showNotification: boolean) {
+    const username: string = this.user.username;
+    this.subs.add(
+      this.projectService.getUserProjects(username).subscribe(
+        (response: Project[]) => {
+          this.projects = response;
+          this.resultProjects = response;
+          if (showNotification) {
+            this.sendNotification(NotificationTypeEnum.SUCCESS, response.length + " project(s) loaded successfully.");
+          }
+        },
+        (errorResponse: HttpErrorResponse) => {
+        }
+      )
+    );
+  }
+
+  private sendNotification(notificationType: NotificationTypeEnum, message: string): void {
+    if (message) {
+      this.notificationService.notify(notificationType, message);
+    } else {
+      this.notificationService.notify(notificationType, 'An error occurred. Please try again.');
+    }
   }
 
   public changeTitle(title: string): void {
