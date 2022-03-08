@@ -24,7 +24,7 @@ import {Router} from "@angular/router";
 })
 export class ProjectOperationalComponent implements OnInit {
   private subs = new SubSink();
-  private titleSubject = new BehaviorSubject<string>('Projects');
+  private titleSubject = new BehaviorSubject<string>('Project Operational');
   public titleActions$ = this.titleSubject.asObservable();
   public refreshing!: boolean;
   public user!: User;

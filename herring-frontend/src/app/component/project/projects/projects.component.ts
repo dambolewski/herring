@@ -201,8 +201,9 @@ export class ProjectsComponent implements OnInit {
 
   public onProjectCompleteCheck(project: Project): boolean {
     let checker = false;
-    for(let value of project.taskGroups){
-      checker = value.done;
+    let taskGroupsCheck: TaskGroup[] = project.taskGroups;
+    if(taskGroupsCheck.every(x => x.done)){
+      checker = true;
     }
     return checker;
   }
@@ -243,5 +244,9 @@ export class ProjectsComponent implements OnInit {
         }
       )
     );
+  }
+
+  onProject(appProject: Project) {
+    console.log(this.onProjectCompleteCheck(appProject));
   }
 }

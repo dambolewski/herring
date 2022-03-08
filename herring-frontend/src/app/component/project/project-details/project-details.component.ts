@@ -22,7 +22,7 @@ import {Attachment} from "../../../model/attachment";
 })
 export class ProjectDetailsComponent implements OnInit {
   private subs = new SubSink();
-  private titleSubject = new BehaviorSubject<string>('Projects');
+  private titleSubject = new BehaviorSubject<string>('Project Details');
   public titleActions$ = this.titleSubject.asObservable();
   public user!: User;
   public project!: Project;

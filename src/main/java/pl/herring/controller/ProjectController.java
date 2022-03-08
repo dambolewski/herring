@@ -23,6 +23,7 @@ import static pl.herring.constant.ProjectConstant.PROJECT_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_ADDED_SUCCESSFULLY;
 import static pl.herring.constant.TaskConstant.TASK_DELETED_SUCCESSFULLY;
 import static pl.herring.constant.TaskGroupConstant.TASKGROUP_ADDED_SUCCESSFULLY;
+import static pl.herring.constant.TaskGroupConstant.TASKGROUP_DELETED_SUCCESSFULLY;
 
 @AllArgsConstructor
 @RestController
@@ -111,7 +112,7 @@ public class ProjectController extends ExceptionHandling {
     @DeleteMapping("/project/deleteTaskGroup/{title}/{id}")
     public ResponseEntity<HttpResponse> deleteTaskGroup(@PathVariable("title") String title, @PathVariable("id") String id) {
         projectService.deleteTaskGroup(title, id);
-        return response(OK, PROJECT_DELETED_SUCCESSFULLY);
+        return response(OK, TASKGROUP_DELETED_SUCCESSFULLY);
     }
 
     @PostMapping("/project/saveTask")
