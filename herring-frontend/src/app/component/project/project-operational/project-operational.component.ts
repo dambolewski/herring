@@ -103,7 +103,6 @@ export class ProjectOperationalComponent implements OnInit {
     this.subs.add(
       this.projectService.addTask(formData).subscribe(
         (response: Project) => {
-          this.clickButton('new-task-close');
           this.getTaskGroups(false);
         },
         (errorResponse: HttpErrorResponse) => {
@@ -112,6 +111,7 @@ export class ProjectOperationalComponent implements OnInit {
         }
       )
     )
+    this.clickButton('new-task-close');
     this.getTaskGroups(false);
   }
 
