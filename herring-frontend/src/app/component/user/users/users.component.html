@@ -24,7 +24,7 @@
           <i class="fa fa-users"></i>
           Users
         </a>
-        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
+        <a [hidden]="!isAdminOrManager" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
            routerLink="/user-settings" data-toggle="tab">
           <i class="fa fa-cogs"></i>
           Settings
@@ -331,14 +331,14 @@
                 <fieldset class="form-group">
                   <div class="form-check">
                     <label class="form-check-label">
-                      <input type="checkbox" name="active" [disabled]="!isAdmin" [(ngModel)]="editUser.active"
-                             class="form-check-input">Active <small [hidden]="isAdmin">(read only)</small>
+                      <input type="checkbox" name="active" [disabled]="!isAdminOrManager" [(ngModel)]="editUser.active"
+                             class="form-check-input">Active <small [hidden]="isAdminOrManager">(read only)</small>
                     </label>
                   </div>
                   <div class="form-check disabled">
                     <label class="form-check-label">
-                      <input type="checkbox" name="notLocked" [disabled]="!isAdmin" [(ngModel)]="editUser.notLocked"
-                             class="form-check-input">Unlocked <small [hidden]="isAdmin">(read only)</small>
+                      <input type="checkbox" name="notLocked" [disabled]="!isAdminOrManager" [(ngModel)]="editUser.notLocked"
+                             class="form-check-input">Unlocked <small [hidden]="isAdminOrManager">(read only)</small>
                     </label>
                   </div>
                 </fieldset>

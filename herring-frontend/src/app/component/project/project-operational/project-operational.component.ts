@@ -57,6 +57,10 @@ export class ProjectOperationalComponent implements OnInit {
     return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.SUPER_ADMIN;
   }
 
+  public get isAdminOrManager(): boolean {
+    return this.isAdmin || this.getUserRole() === Role.MANAGER;
+  }
+
   private getUserRole(): string {
     return this.authenticationService.getUserFromLocalCache().role;
   }

@@ -24,7 +24,7 @@
           <i class="fa fa-users"></i>
           Users
         </a>
-        <a [hidden]="!isAdmin" class="nav-item nav-link active ml-1" (click)="changeTitle('Settings')"
+        <a [hidden]="!isAdminOrManager" class="nav-item nav-link active ml-1" (click)="changeTitle('Settings')"
            routerLink="/user-settings" data-toggle="tab">
           <i class="fa fa-cogs"></i>
           Settings
@@ -33,7 +33,7 @@
           <i class="fas fa-tasks"></i>
           Projects
         </a>
-        <a [hidden]="!isAdmin" class="nav-item nav-link move-right ml-3" (click)="changeTitle('Details')"
+        <a class="nav-item nav-link move-right ml-3" (click)="changeTitle('Details')"
            routerLink="/user-details" data-toggle="tab">
           Welcome, {{user?.firstName}}
           <i class="fa fa-user"></i>
@@ -45,7 +45,7 @@
   <!-- main content -->
   <div class="tab-content mt-3" id="myTabContent">
     <!-- change password -->
-    <div [hidden]="!isAdmin" class="tab-pane fade show active" id="reset-password">
+    <div [hidden]="!isAdminOrManager" class="tab-pane fade show active" id="reset-password">
       <form #resetPasswordForm="ngForm" (ngSubmit)="onResetPassword(resetPasswordForm)">
         <fieldset>
           <legend>User Password Management</legend>

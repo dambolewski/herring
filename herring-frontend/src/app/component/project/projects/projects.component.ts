@@ -141,6 +141,10 @@ export class ProjectsComponent implements OnInit {
     return this.getUserRole() === Role.ADMIN || this.getUserRole() === Role.SUPER_ADMIN;
   }
 
+  public get isAdminOrManager(): boolean {
+    return this.isAdmin || this.getUserRole() === Role.MANAGER;
+  }
+
   private getUserRole(): string {
     return this.authenticationService.getUserFromLocalCache().role;
   }
@@ -204,6 +208,9 @@ export class ProjectsComponent implements OnInit {
     let taskGroupsCheck: TaskGroup[] = project.taskGroups;
     if(taskGroupsCheck.every(x => x.done)){
       checker = true;
+    }
+    if(taskGroupsCheck.length == 0){
+      checker = false;
     }
     return checker;
   }

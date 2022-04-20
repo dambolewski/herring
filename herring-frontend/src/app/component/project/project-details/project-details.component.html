@@ -24,7 +24,7 @@
           <i class="fa fa-users"></i>
           Users
         </a>
-        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
+        <a [hidden]="!isAdminOrManager" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
            routerLink="/user-settings" data-toggle="tab">
           <i class="fa fa-cogs"></i>
           Settings
@@ -101,7 +101,7 @@
                                         <label class="form-check-label">
                                           <input type="checkbox" name="trackFlag" [disabled]="!(isAdminOrManager || project.creator == user.username)"
                                                  [(ngModel)]="project.trackFlag"
-                                                 class="form-check-input">Active <small [hidden]="isAdmin">(read
+                                                 class="form-check-input">Active <small [hidden]="isAdminOrManager">(read
                                           only)</small>
                                         </label>
                                       </div>

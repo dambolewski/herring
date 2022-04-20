@@ -24,7 +24,7 @@
           <i class="fa fa-users"></i>
           Users
         </a>
-        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
+        <a [hidden]="!isAdminOrManager" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')"
            routerLink="/user-settings" data-toggle="tab">
           <i class="fa fa-cogs"></i>
           Settings
