@@ -40,7 +40,7 @@ $ java -jar target/herring-0.0.1-SNAPSHOT.jar (or just Run the app from IDE)
 * Register
 <img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 38 04" 
      src="https://user-images.githubusercontent.com/56168607/164283050-cc4e8aa2-2315-41b3-98e0-87d62f695b28.png">
-* Home page
+* Home page <br>
 This view contains two main functions: 
 	* Greet logged User.
 	* Show Activities tab that allows to see changes made on Projects that User is assigned to.
