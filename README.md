@@ -22,7 +22,7 @@ To run this project, install it locally using npm:
 
 ### Front end
 ```
-$ npm install -g @angular/cli
+$ npm install -g @angular/cli@12.2.0
 $ cd herring-frontend
 $ ng serve
 ```
