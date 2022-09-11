@@ -29,7 +29,8 @@ $ ng serve
 
 ### Back end
 ```
-$ java -jar target/herring-0.0.1-SNAPSHOT.jar (or just Run the app from IDE)
+$ create jar file trough jar or maven
+$ java -jar file_path/SNAPSHOT_jar_filename.jar (or just Run the app from IDE)
 ```
 
 ## Application look
