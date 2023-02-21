@@ -48,15 +48,15 @@ This view contains two main functions:
 	* Show Activities tab that allows to see changes made on Projects that User is assigned to.
 <img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 52 04" 
      src="https://user-images.githubusercontent.com/56168607/164283055-3b93a335-d62a-4bc9-afad-7862e5037f61.png">
-* Users
+* Users<br />
 It allows you to view other User's data and change them when the manager role is assigned to the account.
 <img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 52 13" 
-     src="https://user-images.githubusercontent.com/56168607/164283057-d5f0deff-f979-4502-8328-83ae4414af90.png">
-* Setting
+     src="https://user-images.githubusercontent.com/56168607/220329381-cb8f8b53-5e0a-486f-8629-0e6ea413e6a8.jpeg">
+* Setting<br />
 A view created for Managers in which it is possible to reset the User's password.
 <img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 52 18" 
      src="https://user-images.githubusercontent.com/56168607/164283058-9b2c95c2-198c-4207-b2d2-e74e12e85c26.png">
-* Projects
+* Projects<br />
 The most important view of the application. Allows you to switch to two management views that differ from each other.
 	<img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 52 23" 
 	     src="https://user-images.githubusercontent.com/56168607/164283064-4fc4b022-1778-4a18-9072-48cf621a675e.png">
@@ -66,7 +66,7 @@ The most important view of the application. Allows you to switch to two manageme
 	2. It allows you to create Task Groups and create tasks nested in them.
 	<img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 52 54" 
 	     src="https://user-images.githubusercontent.com/56168607/164283067-456f2434-7c1e-4255-ae81-805fa0d687ef.png">
-* User Profile
+* User Profile<br />
 A view showing all the data about your User profile.
 <img width="1792" alt="Zrzut ekranu 2022-04-20 o 18 37 37" 
      src="https://user-images.githubusercontent.com/56168607/164283119-88c47934-1878-49f0-b98c-4b23abcfbe8a.png">
