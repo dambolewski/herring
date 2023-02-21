@@ -9,6 +9,7 @@ Project management app created with Java, Angular and MySQL.
 
 ## General info
 Project management app created with Java, Angular and MySQL.
+The application allows you to manage projects in agile mode.
 	
 ## Technologies
 Project is created with:
