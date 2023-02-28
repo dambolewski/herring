@@ -102,5 +102,8 @@
       }
     }
   },
-  "defaultProject": "herring-frontend"
+  "defaultProject": "herring-frontend",
+  "cli": {
+    "analytics": false
+  }
 }
